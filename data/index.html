@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#fff5e6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Urban Pet">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Urban Pet · Command Center</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Press+Start+2P&family=Permanent+Marker&family=Fredericka+the+Great&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app">
+    
+    <!-- ═══ LOGIN ══ -->
+    <section id="screen-login" class="screen active">
+      <div class="login-card">
+        <header class="login-header">
+          <span class="pixel-tag">GEBE-BOT</span>
+          <h1 class="pixel-title">Urban Pet</h1>
+          <p class="login-sub">Command Center</p>
+        </header>
+        <div class="auth-tabs" role="tablist">
+          <button type="button" class="auth-tab active" data-mode="login" role="tab" aria-selected="true">Entrar</button>
+          <button type="button" class="auth-tab" data-mode="register" role="tab" aria-selected="false">Crear cuenta</button>
+        </div>
+        <form id="login-form" class="login-form" autocomplete="off">
+          <input type="hidden" id="auth-mode" name="auth-mode" value="login">
+          <label for="username">Nombre de usuario</label>
+          <input type="text" id="username" name="username" placeholder="ej. santi_urban" maxlength="24" required autofocus>
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" placeholder="Mínimo 4 caracteres" minlength="4" maxlength="64" required>
+          <div id="login-error" class="error-msg hidden" role="alert"></div>
+          <button type="submit" class="btn btn-primary" id="auth-submit">
+            <span class="btn-pixel">▶</span> <span id="auth-submit-label">Entrar al mando</span>
+          </button>
+        </form>
+        <p class="login-hint">Tus datos se guardan en el GEBE-BOT · Accede desde iPhone, iPad o PC</p>
+      </div>
+      <div class="login-graffiti" aria-hidden="true">STREET<br>PIXEL</div>
+    </section>
+
+    <!-- ═══ DASHBOARD (SIN HEADER, NAVEGACIÓN POR FLECHAS) ═══ -->
+    <section id="screen-dashboard" class="screen">
+
+      <!-- ═══ NAVEGACIÓN POR FLECHAS ═══ -->
+      <button type="button" id="tab-arrow-prev" class="tab-arrow tab-arrow-prev" aria-label="Pestaña anterior">‹</button>
+      <button type="button" id="tab-arrow-next" class="tab-arrow tab-arrow-next" aria-label="Pestaña siguiente">›</button>
+
+      <div class="tab-dots" role="tablist" aria-label="Pestañas">
+        <button type="button" class="tab-dot active" data-tab="tasks" role="tab" aria-selected="true" aria-label="Tareas"></button>
+        <button type="button" class="tab-dot" data-tab="habits" role="tab" aria-selected="false" aria-label="Hábitos"></button>
+        <button type="button" class="tab-dot" data-tab="reminders" role="tab" aria-selected="false" aria-label="Recordatorios"></button>
+        <button type="button" class="tab-dot" data-tab="calendar" role="tab" aria-selected="false" aria-label="Calendario"></button>
+        <button type="button" class="tab-dot" data-tab="gebebot" role="tab" aria-selected="false" aria-label="Gebe-bot"></button>
+      </div>
+
+      <div class="tab-panels">
+
+      <!-- ═══ PANEL: TAREAS (Stickers verdes) ═══ -->
+      <div id="panel-tasks" class="tab-panel active sticker-board" data-type="task" role="tabpanel">
+        <button id="btn-add-task" class="btn-add btn-add-task" title="Agregar tarea">
+          <img src="images/btn-add-task.png" alt="Agregar tarea">
+        </button>
+        <div id="sticker-container-tasks" class="sticker-container"></div>
+      </div>
+
+      <!-- ═══ PANEL: HÁBITOS (Stickers amarillos) ═══ -->
+      <div id="panel-habits" class="tab-panel sticker-board" data-type="habit" role="tabpanel">
+        <button id="btn-add-habit" class="btn-add btn-add-habit" title="Agregar hábito">
+          <img src="images/btn-add-habit.png" alt="Agregar hábito">
+        </button>
+        <div id="sticker-container-habits" class="sticker-container"></div>
+      </div>
+
+      <!-- ═══ PANEL: RECORDATORIOS (Stickers azules) ═══ -->
+      <div id="panel-reminders" class="tab-panel sticker-board" data-type="reminder" role="tabpanel">
+        <button id="btn-add-reminder" class="btn-add btn-add-reminder" title="Añadir recordatorio">
+          <img src="images/btn-add-reminder.png" alt="Añadir recordatorio">
+        </button>
+        <div id="sticker-container-reminders" class="sticker-container"></div>
+      </div>
+
+      <!-- ═══ PANEL: CALENDARIO ═══ -->
+      <div id="panel-calendar" class="tab-panel calendar-board" role="tabpanel">
+        <div class="calendar-header">
+          <button id="cal-prev" class="btn-icon-nav" aria-label="Mes anterior">‹</button>
+          <button id="cal-next" class="btn-icon-nav" aria-label="Mes siguiente">›</button>
+        </div>
+        
+        <div class="cal-grid">
+          <div id="cal-year" class="cal-year">2025</div>
+          <h2 id="cal-title" class="cal-title" data-month="0">ENERO</h2>
+          
+          <div class="cal-weekdays">
+            <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+          </div>
+          <div id="cal-grid-days" class="cal-grid-days" role="grid"></div>
+        </div>
+        
+        <div id="cal-detail" class="cal-detail">
+          <p class="cal-detail-hint">Selecciona un día para ver actividad</p>
+        </div>
+      </div>
+
+      <!-- ═══ PANEL: GEBE-BOT (Con header y stats) ═══ -->
+      <div id="panel-gebebot" class="tab-panel gebebot-board" role="tabpanel">
+        <div class="gebebot-full-content">
+          
+          <!-- Header del GEBE-BOT -->
+          <header class="gebebot-header">
+            <div class="gebebot-brand">
+              <span class="pixel-tag sm">UP</span>
+              <div>
+                <h1 class="dash-title">Command Center</h1>
+                <p class="dash-user">Operador: <strong id="display-username">—</strong></p>
+              </div>
+            </div>
+            <div class="gebebot-actions">
+              <button id="btn-sync" class="btn-icon" title="Sincronizar con GEBE-BOT" aria-label="Sincronizar">
+                <span id="sync-indicator" class="sync-pixel" data-state="idle"></span>
+              </button>
+              <button id="btn-logout" class="btn-ghost">Salir</button>
+            </div>
+          </header>
+
+          <!-- Estadísticas -->
+          <div class="gebebot-stats-card">
+            <h2 class="section-label pixel-label">Estado remoto</h2>
+            <div class="stat-bars">
+              <div class="stat-row">
+                <span class="stat-name">Hambre</span>
+                <div class="stat-track"><div id="bar-hunger" class="stat-fill hunger" style="width:100%"></div></div>
+                <span id="val-hunger" class="stat-val">100</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-name">Felicidad</span>
+                <div class="stat-track"><div id="bar-happiness" class="stat-fill happiness" style="width:100%"></div></div>
+                <span id="val-happiness" class="stat-val">100</span>
+              </div>
+              <div class="stat-row">
+                <span class="stat-name">Salud</span>
+                <div class="stat-track"><div id="bar-health" class="stat-fill health" style="width:100%"></div></div>
+                <span id="val-health" class="stat-val">100</span>
+              </div>
+            </div>
+            <p id="connection-status" class="connection-status" data-state="connecting">Conectando con gebebot.local…</p>
+          </div>
+        </div>
+      </div>
+
+      </div><!-- /.tab-panels -->
+    </section>
+  </div>
+
+  <!-- ═══ MODAL ESTILO "¡HOLA! MI TAREA/HÁBITO/RECORDATORIO ES..." ═══ -->
+  <dialog id="modal-task" class="modal modal-large">
+    <form id="form-task" method="dialog">
+      
+      <!-- Header dinámico estilo etiqueta -->
+      <div id="modal-header-tag" class="modal-header-tag task">
+        <h2 class="tag-title">¡HOLA!</h2>
+        <div class="tag-subtitle">Mi tarea es...</div>
+      </div>
+      
+      <input type="hidden" id="task-id">
+      <input type="hidden" id="task-type" value="task">
+      
+      <label for="task-title">Título</label>
+      <input type="text" id="task-title" maxlength="80" required placeholder="Escribe aquí...">
+      
+      <label for="task-description">Descripción (opcional)</label>
+      <textarea id="task-description" maxlength="200" rows="3" placeholder="Detalles adicionales..."></textarea>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="task-date">Fecha</label>
+          <input type="date" id="task-date" required>
+        </div>
+        <div class="form-group">
+          <label for="task-time-start">Hora inicio</label>
+          <input type="time" id="task-time-start">
+        </div>
+      </div>
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="task-time-end">Hora fin (opcional)</label>
+          <input type="time" id="task-time-end">
+        </div>
+        <div class="form-group">
+          <label for="task-category">Categoría</label>
+          <select id="task-category">
+            <option value="personal">🏠 Personal</option>
+            <option value="trabajo">💼 Trabajo</option>
+            <option value="escuela">📚 Escuela</option>
+            <option value="salud"> Salud</option>
+            <option value="otro">📌 Otro</option>
+          </select>
+        </div>
+      </div>
+      
+      <label for="task-recurrence">Repetición</label>
+      <select id="task-recurrence">
+        <option value="none">No repetir</option>
+        <option value="daily">Diariamente</option>
+        <option value="weekly">Semanalmente</option>
+        <option value="monthly">Mensualmente</option>
+      </select>
+      
+      <div class="modal-actions">
+        <button type="button" id="btn-task-cancel" class="btn-ghost">Cancelar</button>
+        <button type="button" id="btn-task-delete" class="btn-danger hidden">Eliminar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ═══ ANIMACIÓN STICKER EN SEÑAL DE STOP ═══ -->
+  <div id="sticker-overlay" class="sticker-overlay">
+    <div class="stop-sign">
+      <span class="stop-text">STOP</span>
+      <div class="slapped-sticker" id="anim-sticker">
+        <span id="anim-sticker-text">Tarea</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="graffiti-footer"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/Draggable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/InertiaPlugin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

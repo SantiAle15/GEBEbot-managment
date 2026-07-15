@@ -1,0 +1,19 @@
+{
+  "name": "Urban Pet Command Center",
+  "short_name": "Urban Pet",
+  "description": "Centro de mando de productividad para GEBE-BOT",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0d0d0f",
+  "theme_color": "#0d0d0f",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect fill='%230d0d0f' width='64' height='64'/%3E%3Ctext x='8' y='44' font-family='monospace' font-size='28' fill='%23ff2d6a'%3EUP%3C/text%3E%3C/svg%3E",
+      "sizes": "64x64",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
