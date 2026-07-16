@@ -109,6 +109,7 @@ async function syncToDevice() {
   if (!user) return;
 
   setSyncState("syncing");
+  markLocalSave();   // suprime el eco de mi propia escritura en el listener
 
   try {
     // Sincronizar los 3 tipos de elementos
@@ -153,6 +154,19 @@ function forceLogout(message) {
 
 let unsubStatus = null;
 let unsubDevice = null;
+let unsubUserData = null;
+
+// Bandera: cuando YO estoy guardando, ignoro el eco de mi propia escritura
+// para no re-renderizar y tirar los stickers que estoy moviendo.
+let localSaveInProgress = false;
+let localSaveClearTimer = null;
+
+export function markLocalSave() {
+  localSaveInProgress = true;
+  if (localSaveClearTimer) clearTimeout(localSaveClearTimer);
+  // Tras 1.5s sin más escrituras, vuelvo a aceptar cambios remotos
+  localSaveClearTimer = setTimeout(() => { localSaveInProgress = false; }, 1500);
+}
 
 // Antes: preguntábamos al ESP32 cada 5 seg (polling).
 // Ahora: Firebase nos AVISA en cuanto cambian las stats (tiempo real).
@@ -176,11 +190,26 @@ function startPolling() {
     const dot = document.getElementById("gebebot-connection-dot");
     if (dot) dot.className = `connection-indicator ${online ? "online" : "offline"}`;
   });
+
+  // TIEMPO REAL de tareas/hábitos/recordatorios: si otro dispositivo
+  // cambia algo, esta vista se actualiza sola (arregla la pérdida de datos).
+  unsubUserData = api.subscribeUserData((data, err) => {
+    if (err || !data) return;
+    // Ignorar el eco de mi propia escritura reciente (evita tirar
+    // los stickers que estoy moviendo justo ahora)
+    if (localSaveInProgress) return;
+
+    state.loadFromServer(data);
+    renderStickers('task');
+    renderStickers('habit');
+    renderStickers('reminder');
+  });
 }
 
 function stopPolling() {
   if (unsubStatus) { unsubStatus(); unsubStatus = null; }
   if (unsubDevice) { unsubDevice(); unsubDevice = null; }
+  if (unsubUserData) { unsubUserData(); unsubUserData = null; }
   if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 }
 
