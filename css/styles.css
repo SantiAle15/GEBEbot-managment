@@ -1,0 +1,4092 @@
+/* ═══════════════════════════════════════════════════════════
+Urban Pet Command Center — Street Art & Graffiti Theme
+Con fuente Reticulum 3 y CAPS en calendario
+═══════════════════════════════════════════════════════════ */
+
+/* ═══ FUENTES PERSONALIZADAS ═══ */
+@font-face {
+  font-family: 'Reticulum3';
+  src: url('../fonts/Reticulum3.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg-deep: #fff5e6;
+  --bg-panel: #ffffff;
+  --bg-elevated: #fff9f0;
+  --bg-input: #ffffff;
+  --terracotta: #ff8c69;
+  --terracotta-dark: #ff6b4a;
+  --brick-red: #ff7f66;
+  --border: #ffd4b8;
+  --border-accent: #ff6b9d;
+  --text: #4a3a32;
+  --text-muted: #8b7355;
+  --accent: #ff6b9d;
+  --accent-2: #9bff33;
+  --accent-3: #33ccff;
+  --accent-4: #ffcc33;
+  --accent-5: #ff9933;
+  --cat-personal: #a855f7;
+  --cat-trabajo: #3b82f6;
+  --cat-escuela: #eab308;
+  --cat-salud: #ef4444;
+  --cat-otro: #6b7280;
+  --warning: #ffaa00;
+  --danger: #ff4444;
+  --hunger: #ff9500;
+  --happiness: #ff6b9d;
+  --health: #33cc66;
+  --radius: 8px;
+  --radius-lg: 16px;
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  --shadow-neon: 0 0 20px rgba(0, 0, 0, 0.15);
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-pixel: "Press Start 2P", monospace;
+  --font-graffiti: "Reticulum3", "Permanent Marker", cursive;
+  --font-handwritten: "Fredericka the Great", cursive;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+FONDO CON IMÁGENES
+═══════════════════════════════════════════════════════════ */
+
+body {
+  font-family: var(--font-body);
+  background-image: url('../FondoVertical.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-color: #fff5e6;
+  color: var(--text);
+  min-height: 100dvh;
+  line-height: 1.5;
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+@media (orientation: landscape) {
+  body {
+    background-image: url('../FondoHorizontal.png');
+  }
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse 150px 150px at 15% 25%, rgba(255, 107, 157, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 200px 200px at 85% 75%, rgba(51, 204, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 100px 100px at 50% 50%, rgba(155, 255, 51, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#app { position: relative; z-index: 10; min-height: 100dvh; }
+
+/* ═══════════════════════════════════════════════════════════
+SCREENS
+═══════════════════════════════════════════════════════════ */
+
+.screen { display: none; min-height: 100dvh; width: 100%; }
+.screen.active { display: block; }
+
+#screen-login {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  position: relative;
+}
+#screen-login.active { display: flex; }
+
+#screen-dashboard {
+  display: none;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  position: relative;
+  z-index: 2;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+#screen-dashboard.active { display: flex; flex-direction: column; }
+
+/* ─── Login ─── */
+
+.login-card {
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 249, 240, 0.95) 100%);
+  border: 4px solid var(--border);
+  border-top: 5px solid var(--accent);
+  padding: 2.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  border-radius: var(--radius-lg);
+  z-index: 2;
+}
+
+.login-card::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  width: 100%;
+  height: 100%;
+  border: 4px solid rgba(0, 0, 0, 0.2);
+  z-index: -1;
+  border-radius: var(--radius-lg);
+}
+
+.login-header { text-align: center; margin-bottom: 2rem; }
+
+.auth-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 4px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  overflow: hidden;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 0.85rem 0.5rem;
+  background: rgba(255, 245, 230, 0.6);
+  border: none;
+  border-bottom: 4px solid transparent;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: -4px;
+  position: relative;
+  z-index: 2;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.auth-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.pixel-tag {
+  display: inline-block;
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--accent-3);
+  background: rgba(51, 204, 255, 0.2);
+  border: 3px solid var(--accent-3);
+  padding: 0.4rem 0.7rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  text-shadow: 0 0 8px rgba(51, 204, 255, 0.6);
+}
+
+.pixel-tag.sm { font-size: 0.5rem; padding: 0.3rem 0.5rem; }
+
+.pixel-title {
+  font-family: var(--font-pixel);
+  font-size: clamp(1rem, 5vw, 1.4rem);
+  color: var(--accent);
+  text-shadow: 4px 4px 0 rgba(255, 255, 255, 0.95), 0 0 25px rgba(0, 0, 0, 0.3);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+}
+
+.login-sub {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-weight: 600;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.login-form label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.login-form input,
+.add-form input,
+.modal input[type="text"],
+.modal textarea,
+.modal select {
+  width: 100%;
+  padding: 0.95rem 1.1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+
+.login-form input:focus,
+.add-form input:focus,
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.login-hint {
+  margin-top: 1.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.6;
+}
+
+.login-graffiti {
+  position: absolute;
+  bottom: 2rem;
+  right: 2rem;
+  font-family: var(--font-graffiti);
+  font-size: 0.7rem;
+  color: rgba(255, 107, 157, 0.3);
+  line-height: 1.8;
+  transform: rotate(-10deg);
+  pointer-events: none;
+  user-select: none;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+.error-msg {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  padding: 0.85rem;
+  background: rgba(255, 68, 68, 0.2);
+  border: 3px solid var(--danger);
+  color: var(--danger);
+  font-size: 0.85rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+}
+
+.hidden { display: none !important; }
+
+/* ─── Buttons ─── */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.95rem 1.4rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  border: 3px solid transparent;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn:active { transform: scale(0.96); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-5) 100%);
+  color: #fff;
+  border-color: var(--accent);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #ff5588 0%, #ff8844 100%);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-accent {
+  background: #9bff33;
+  color: #1a5c00;
+  border: 3px solid #7ae020;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.btn-accent:hover {
+  background: #7ae020;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.6);
+  border: 3px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-ghost:hover {
+  color: var(--text);
+  border-color: var(--accent-3);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.btn-icon {
+  background: rgba(255, 255, 255, 0.8);
+  border: 3px solid var(--border);
+  color: var(--text);
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  border-color: var(--accent-3);
+  background: rgba(255, 255, 255, 0.95);
+  transform: scale(1.05);
+}
+
+.btn-icon-nav {
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid var(--border);
+  color: var(--text);
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btn-icon-nav:hover {
+  border-color: var(--accent);
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.btn-pixel {
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+.btn-danger {
+  color: var(--danger);
+  border-color: rgba(255, 68, 68, 0.6);
+  background: rgba(255, 68, 68, 0.15);
+}
+
+.btn-danger:hover {
+  background: rgba(255, 68, 68, 0.25);
+  border-color: var(--danger);
+}
+
+.btn-full {
+  width: 100%;
+  margin-bottom: 1.25rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+DASHBOARD HEADER (AHORA DENTRO DE GEBE-BOT)
+═══════════════════════════════════════════════════════════ */
+
+.dash-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  border-bottom: 4px solid var(--border);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  margin-bottom: 1.5rem;
+}
+
+.dash-brand { display: flex; align-items: flex-start; gap: 1rem; }
+
+.dash-title {
+  font-family: var(--font-graffiti);
+  font-size: 1.6rem;
+  color: var(--accent-3);
+  text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.9);
+  letter-spacing: 1px;
+}
+
+.dash-user {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.dash-user strong {
+  color: var(--accent-2);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+.dash-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+.sync-pixel {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.sync-pixel[data-state="syncing"] {
+  color: var(--accent-3);
+  animation: blink 0.6s step-end infinite;
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+.sync-pixel[data-state="ok"] {
+  color: var(--accent-2);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+.sync-pixel[data-state="error"] {
+  color: var(--danger);
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes blink {
+  50% { opacity: 0.3; }
+}
+
+/* ─── Stats panel ─── */
+
+.stats-panel {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 249, 240, 0.95) 100%);
+  border: 4px solid var(--border);
+  padding: 1.25rem 1.5rem;
+  border-left: 6px solid var(--accent-3);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-label,
+.pixel-label {
+  font-family: var(--font-pixel);
+  font-size: 0.6rem;
+  color: var(--accent-5);
+  margin-bottom: 1rem;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.stat-bars { display: flex; flex-direction: column; gap: 0.85rem; }
+
+.stat-row {
+  display: grid;
+  grid-template-columns: 6rem 1fr 3rem;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.stat-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-track {
+  height: 14px;
+  background: rgba(255, 245, 230, 0.8);
+  border: 3px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.stat-fill {
+  height: 100%;
+  transition: width 0.5s ease;
+  border-radius: 3px;
+  box-shadow: 0 0 12px currentColor;
+}
+
+.stat-fill.hunger {
+  background: linear-gradient(90deg, #ffaa44, var(--hunger));
+  color: var(--hunger);
+}
+
+.stat-fill.happiness {
+  background: linear-gradient(90deg, #ff5588, var(--happiness));
+  color: var(--happiness);
+}
+
+.stat-fill.health {
+  background: linear-gradient(90deg, #22aa44, var(--health));
+  color: var(--health);
+}
+
+.stat-val {
+  font-family: var(--font-pixel);
+  font-size: 0.5rem;
+  text-align: right;
+  color: var(--accent-5);
+}
+
+.connection-status {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.connection-status[data-state="online"] {
+  color: var(--accent-2);
+  background: rgba(155, 255, 51, 0.2);
+}
+
+.connection-status[data-state="offline"] {
+  color: var(--danger);
+  background: rgba(255, 68, 68, 0.2);
+}
+
+/* ═══════════════════════════════════════════════════════════
+TABS DE NAVEGACIÓN (5 tabs con colores)
+═══════════════════════════════════════════════════════════ */
+
+.tab-nav {
+  display: flex;
+  gap: 0;
+  border-bottom: 4px solid var(--border);
+  border-radius: 0;
+  overflow: hidden;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  background: rgba(255, 245, 230, 0.95);
+  z-index: 100;
+}
+
+.tab {
+  flex: 1;
+  min-width: 100px;
+  padding: 1rem 0.75rem;
+  background: rgba(255, 245, 230, 0.6);
+  border: none;
+  border-bottom: 4px solid transparent;
+  color: var(--text-muted);
+  font-family: var(--font-graffiti);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: -4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tab:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.tab.active {
+  border-bottom-width: 4px;
+}
+
+/* Colores específicos para cada tab */
+.tab-tasks.active {
+  color: #2d5016;
+  border-bottom-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.15);
+}
+
+.tab-habits.active {
+  color: #5c4500;
+  border-bottom-color: #FFC107;
+  background: rgba(255, 193, 7, 0.15);
+}
+
+.tab-reminders.active {
+  color: #0d47a1;
+  border-bottom-color: #2196F3;
+  background: rgba(33, 150, 243, 0.15);
+}
+
+.tab-calendar.active {
+  color: #b71c1c;
+  border-bottom-color: #f44336;
+  background: rgba(244, 67, 54, 0.15);
+}
+
+.tab-gebebot.active {
+  color: #e65100;
+  border-bottom-color: #FF9800;
+  background: rgba(255, 152, 0, 0.15);
+}
+
+.tab-panel { display: none; padding-top: 0; }
+.tab-panel.active { display: block; }
+
+/* ═══════════════════════════════════════════════════════════
+PANELES DE STICKERS (OCUPAN TODA LA PANTALLA)
+═══════════════════════════════════════════════════════════ */
+
+.sticker-board {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0;
+  margin-top: 0;
+  background-color: transparent !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+/* Fondos por tab */
+#panel-tasks {
+  background-image: url('../images/bg-tareas.jpg');
+}
+
+#panel-habits {
+  background-image: url('../images/bg-habitos.jpg');
+}
+
+#panel-reminders {
+  background-image: url('../images/bg-recordatorios.jpg');
+}
+
+.calendar-board {
+  background-image: url('../images/bg-calendario.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 2rem;
+  border-radius: 0;
+  margin-top: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.gebebot-board {
+  background-image: url('../images/bg-gebebot.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 2rem;
+  border-radius: 0;
+  margin-top: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* Contenedor de stickers ocupa todo */
+.sticker-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+/* ═══════════════════════════════════════════════════════════
+BOTONES DE AGREGAR (SEÑALES DE TRÁFICO)
+═══════════════════════════════════════════════════════════ */
+
+/* Reset total - elimina CUALQUIER estilo heredado */
+#btn-add-task,
+#btn-add-habit,
+#btn-add-reminder,
+.btn-add {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  text-shadow: none !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: block !important;
+  cursor: pointer !important;
+  position: fixed !important;
+  z-index: 9999 !important;
+  transform: none !important;
+  transition: transform 0.2s ease, filter 0.2s ease !important;
+}
+
+/* La imagen del botón - tamaño pequeño */
+#btn-add-task img,
+#btn-add-habit img,
+#btn-add-reminder img,
+.btn-add img {
+  display: block !important;
+  width: 120px !important;
+  height: 120px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  image-rendering: pixelated !important;
+  image-rendering: -moz-crisp-edges !important;
+  image-rendering: crisp-edges !important;
+}
+
+/* Posicionamiento específico para cada botón */
+#btn-add-task {
+  left: 20px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+#btn-add-habit {
+  right: 20px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+#btn-add-reminder {
+  bottom: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+/* Efecto hover - se agranda un poco */
+#btn-add-task:hover {
+  transform: translateY(-50%) scale(1.15) !important;
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(76, 175, 80, 0.6)) !important;
+}
+
+#btn-add-habit:hover {
+  transform: translateY(-50%) scale(1.15) !important;
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 193, 7, 0.6)) !important;
+}
+
+#btn-add-reminder:hover {
+  transform: translateX(-50%) scale(1.15) !important;
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(33, 150, 243, 0.6)) !important;
+}
+
+/* Efecto al hacer click */
+#btn-add-task:active,
+#btn-add-habit:active,
+#btn-add-reminder:active {
+  transform: translateY(-50%) scale(0.95) !important;
+}
+
+#btn-add-reminder:active {
+  transform: translateX(-50%) scale(0.95) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+LISTAS Y CARDS (LEGACY - por si acaso)
+═══════════════════════════════════════════════════════════ */
+
+.add-form {
+  display: flex;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.item-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.item-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1.1rem 1.25rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 249, 240, 0.95) 100%);
+  border: 4px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.item-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: var(--accent);
+}
+
+.item-card:hover {
+  border-color: var(--accent);
+  transform: translateX(4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.item-checkbox {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 3px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.item-checkbox.checked {
+  background: var(--accent-2);
+  border-color: var(--accent-2);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+}
+
+.item-checkbox.checked::after {
+  content: "✓";
+  color: #1a5c00;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.item-content { flex: 1; min-width: 0; }
+
+.item-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  word-break: break-word;
+}
+
+.item-title.completed {
+  text-decoration: line-through;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.item-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.item-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.item-category.personal { background: var(--cat-personal); }
+.item-category.trabajo { background: var(--cat-trabajo); }
+.item-category.escuela { background: var(--cat-escuela); color: #2c3e50; }
+.item-category.salud { background: var(--cat-salud); }
+.item-category.otro { background: var(--cat-otro); }
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  border: 4px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* ═══════════════════════════════════════════════════════════
+CALENDARIO DINÁMICO CON CAPS DE SPRAY
+═══════════════════════════════════════════════════════════ */
+
+#panel-calendar {
+  background: transparent;
+  padding: 1rem;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.cal-grid {
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cal-year {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 0.5rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.cal-title {
+  font-family: var(--font-graffiti);
+  font-size: clamp(3rem, 10vw, 5rem);
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  letter-spacing: 4px;
+  line-height: 1;
+  transform: rotate(-2deg);
+  transition: all 0.3s;
+}
+
+.cal-title:hover {
+  transform: rotate(0deg) scale(1.05);
+}
+
+.cal-title[data-month="0"] { color: #e74c3c; }
+.cal-title[data-month="1"] { color: #e91e63; }
+.cal-title[data-month="2"] { color: #9c27b0; }
+.cal-title[data-month="3"] { color: #673ab7; }
+.cal-title[data-month="4"] { color: #3f51b5; }
+.cal-title[data-month="5"] { color: #2196f3; }
+.cal-title[data-month="6"] { color: #00bcd4; }
+.cal-title[data-month="7"] { color: #009688; }
+.cal-title[data-month="8"] { color: #4caf50; }
+.cal-title[data-month="9"] { color: #8bc34a; }
+.cal-title[data-month="10"] { color: #ff9800; }
+.cal-title[data-month="11"] { color: #ff5722; }
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+  margin-bottom: 0;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 0.75rem;
+}
+
+.cal-weekdays span {
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  padding: 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cal-grid-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  padding: 0.35rem;
+  position: relative;
+  border-right: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+}
+
+.cal-day:nth-child(7n) { border-right: none; }
+.cal-day:nth-last-child(-n+7) { border-bottom: none; }
+
+.cal-day:hover:not(.empty):not(.future) {
+  background: rgba(255, 107, 157, 0.1);
+  transform: scale(1.05);
+  z-index: 10;
+}
+
+.cal-day.empty {
+  background: transparent;
+  cursor: default;
+}
+
+.cal-day.today {
+  background: rgba(51, 204, 255, 0.15);
+  font-weight: 700;
+}
+
+.cal-day.selected {
+  background: rgba(255, 107, 157, 0.2);
+  font-weight: 700;
+}
+
+.cal-day.future {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.cal-day-number {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+/* ═══ CAPS DE SPRAY ═══ */
+
+.cal-caps {
+  display: flex;
+  gap: 2px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2px;
+  flex-wrap: wrap;
+}
+
+.cal-cap {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.cal-cap.task {
+  background-image: url('../images/cap-tarea.png');
+}
+
+.cal-cap.habit {
+  background-image: url('../images/cap-habito.png');
+}
+
+.cal-cap-count {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-pixel);
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 
+    1px 1px 0 #000,
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* ─── Detalle del día seleccionado ─── */
+
+.cal-detail {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 249, 240, 0.95) 100%);
+  border: 4px solid var(--border);
+  border-left: 6px solid var(--accent);
+  border-radius: var(--radius-lg);
+  min-height: 5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.cal-detail h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--accent-3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cal-detail ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cal-detail li {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius);
+}
+
+.cal-detail li::before {
+  content: "■";
+  font-family: var(--font-pixel);
+  font-size: 0.4rem;
+}
+
+.cal-detail li.task-item::before { color: #9bff33; }
+.cal-detail li.habit-item::before { color: #ffcc00; }
+
+.cal-detail-hint {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* ═══════════════════════════════════════════════════════════
+MODAL
+═══════════════════════════════════════════════════════════ */
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-1.5deg);
+  max-width: 90vw;
+  width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 4px solid var(--border);
+  border-top: 6px solid var(--accent);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 249, 240, 0.98) 100%);
+  color: var(--text);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.3),
+    0 0 40px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.modal-large {
+  width: 550px;
+}
+
+.modal:hover {
+  transform: translate(-50%, -50%) rotate(-0.5deg);
+  transition: transform 0.3s ease;
+}
+
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modal h3 {
+  font-family: var(--font-pixel);
+  font-size: 0.85rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 0.5rem;
+}
+
+.modal label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-5);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.4rem;
+}
+
+.modal input,
+.modal textarea,
+.modal select {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.2);
+}
+
+.modal textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 3px solid var(--border);
+}
+
+/* ═══ Modal Header Tag ═══ */
+
+.modal-header-tag {
+  position: relative;
+  padding: 2rem 2rem 1.5rem;
+  margin: -2rem -2rem 1.5rem -2rem;
+  text-align: center;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.15),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header-tag.task {
+  background: linear-gradient(135deg, #7cb342 0%, #689f38 50%, #558b2f 100%);
+}
+
+.modal-header-tag.habit {
+  background: linear-gradient(135deg, #f9a825 0%, #fbc02d 50%, #f57f17 100%);
+}
+
+.modal-header-tag.reminder {
+  background: linear-gradient(135deg, #1976d2 0%, #2196f3 50%, #1565c0 100%);
+}
+
+.modal-header-tag::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255, 255, 255, 0.03) 10px,
+      rgba(255, 255, 255, 0.03) 20px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 10px,
+      rgba(0, 0, 0, 0.02) 10px,
+      rgba(0, 0, 0, 0.02) 20px
+    );
+  pointer-events: none;
+}
+
+.modal-header-tag::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.2) 50%);
+  border-radius: 0 0 8px 0;
+  pointer-events: none;
+}
+
+.modal-header-tag .tag-title {
+  font-family: var(--font-graffiti);
+  font-size: clamp(2.5rem, 7vw, 4rem);
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0;
+  letter-spacing: 3px;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  text-shadow: 
+    2px 2px 0 rgba(0, 0, 0, 0.3),
+    0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header-tag .tag-subtitle {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin-top: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  position: relative;
+  z-index: 1;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+#task-title {
+  font-family: var(--font-body);
+  font-size: 1.3rem;
+  text-align: center;
+  padding: 1.2rem;
+  border: 3px dashed var(--border);
+  background: rgba(255, 255, 255, 0.95);
+  transition: all 0.3s ease;
+  font-weight: 600;
+  border-radius: var(--radius);
+}
+
+#task-title:focus {
+  border-style: solid;
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(255, 107, 157, 0.3);
+  outline: none;
+}
+
+#task-title::placeholder {
+  color: var(--text-muted);
+  opacity: 0.5;
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════════════════════
+GRAFFITI FOOTER
+═══════════════════════════════════════════════════════════ */
+
+.graffiti-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  background-image: url('../GebeBotLogo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.9;
+  transition: all 0.3s ease;
+}
+
+@media (orientation: portrait) {
+  .graffiti-footer {
+    height: 90px;
+    opacity: 0.6;
+    background-position: center bottom;
+  }
+}
+
+@media (orientation: landscape) {
+  .graffiti-footer {
+    height: 160px;
+    opacity: 0.85;
+    background-position: right bottom;
+    margin-right: 20px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+ANIMACIONES
+═══════════════════════════════════════════════════════════ */
+
+@keyframes spray {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: scale(1) rotate(360deg); opacity: 1; }
+}
+
+@keyframes drip {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(20px); opacity: 0; }
+}
+
+@keyframes stickerSlap {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-45deg) translateY(-100px);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1.2) rotate(5deg) translateY(0);
+  }
+  50% {
+    transform: scale(0.95) rotate(-2deg);
+  }
+  70% {
+    transform: scale(1.05) rotate(1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-1.5deg);
+  }
+}
+
+@keyframes stickerShine {
+  0% {
+    transform: translateX(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(45deg);
+  }
+}
+
+.item-card.new-item {
+  animation: stickerSlap 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.item-card.new-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: stickerShine 0.6s ease-out;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+RESPONSIVE
+═══════════════════════════════════════════════════════════ */
+
+@media (min-width: 768px) {
+  #screen-dashboard {
+    padding: 1.75rem 2rem 3rem;
+    gap: 1.5rem;
+  }
+  
+  .stats-panel,
+  .tab-panel {
+    border-radius: var(--radius-lg);
+  }
+  
+  .add-form input { flex: 1; }
+}
+
+@media (max-width: 768px) {
+  .form-row { grid-template-columns: 1fr; }
+  .modal-large { width: 95vw; }
+  .cal-title { font-size: 3rem; }
+  
+  .tab {
+    font-size: 0.85rem;
+    padding: 0.75rem 0.4rem;
+    min-width: 80px;
+  }
+  
+  #btn-add-task img,
+  #btn-add-habit img,
+  #btn-add-reminder img {
+    width: 90px !important;
+    height: 90px !important;
+  }
+  
+  #btn-add-task { left: 10px !important; }
+  #btn-add-habit { right: 10px !important; }
+  #btn-add-reminder { bottom: 10px !important; }
+}
+
+@media (max-width: 480px) {
+  .cal-grid {
+    padding: 0.75rem;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .cal-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .cal-year {
+    font-size: 0.85rem;
+  }
+  
+  .cal-weekdays span {
+    font-size: 0.7rem;
+    padding: 0.3rem 0;
+  }
+  
+  .cal-day {
+    min-height: 2.5rem;
+    font-size: 0.8rem;
+    padding: 0.2rem;
+  }
+  
+  .cal-day-number {
+    font-size: 0.85rem;
+  }
+  
+  .cal-cap {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .cal-cap-count {
+    font-size: 0.4rem;
+  }
+  
+  .btn-icon-nav {
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: 1.2rem;
+  }
+  
+  .cal-detail {
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  
+  .cal-detail h3 {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .cal-detail li {
+    font-size: 0.8rem;
+    padding: 0.3rem;
+  }
+  
+  .modal {
+    width: 95vw;
+    max-width: 95vw;
+    padding: 1.25rem;
+    border-radius: var(--radius);
+  }
+  
+  .modal-large {
+    width: 95vw;
+    max-width: 95vw;
+  }
+  
+  .modal-header-tag {
+    padding: 1.25rem 1rem;
+    margin: -1.25rem -1.25rem 1rem -1.25rem;
+  }
+  
+  .modal-header-tag .tag-title {
+    font-size: 2.5rem;
+  }
+  
+  .modal-header-tag .tag-subtitle {
+    font-size: 0.95rem;
+  }
+  
+  #task-title {
+    font-size: 1.1rem;
+    padding: 0.9rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .modal label {
+    font-size: 0.75rem;
+  }
+  
+  .modal input,
+  .modal select {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+  
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .modal-actions button {
+    width: 100%;
+  }
+  
+  .dash-header {
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  
+  .dash-title {
+    font-size: 1.2rem;
+  }
+  
+  .dash-user {
+    font-size: 0.75rem;
+  }
+  
+  .stats-panel {
+    padding: 0.75rem;
+  }
+  
+  .stat-row {
+    grid-template-columns: 4rem 1fr 2.5rem;
+    gap: 0.5rem;
+  }
+  
+  .stat-name {
+    font-size: 0.7rem;
+  }
+  
+  .stat-val {
+    font-size: 0.4rem;
+  }
+  
+  .item-card {
+    padding: 0.75rem;
+  }
+  
+  .item-title {
+    font-size: 0.9rem;
+  }
+  
+  .item-meta {
+    font-size: 0.7rem;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  
+  .item-category {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .cal-day {
+    min-height: 2rem;
+    font-size: 0.7rem;
+  }
+  
+  .cal-day-number {
+    font-size: 0.75rem;
+  }
+  
+  .cal-cap {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .cal-cap-count {
+    font-size: 0.35rem;
+  }
+  
+  .cal-title {
+    font-size: 1.75rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+CALENDARIO VISTA VERTICAL (PORTRAIT)
+═══════════════════════════════════════════════════════════ */
+
+@media (orientation: portrait) and (max-width: 768px) {
+  .cal-grid {
+    padding: 1rem;
+  }
+  
+  .cal-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .cal-day {
+    min-height: 4rem;
+    aspect-ratio: auto;
+    padding: 0.4rem;
+  }
+  
+  .cal-day-number {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+  
+  .cal-cap {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .cal-cap-count {
+    font-size: 0.5rem;
+  }
+  
+  .cal-detail {
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .cal-detail h3 {
+    font-size: 1rem;
+  }
+  
+  .cal-detail li {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+VISTA DE BLOQUES DE HORA (Google Calendar style)
+══════════════════════════════════════════════════════════ */
+
+.cal-detail-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.cal-hour-block {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  align-items: center;
+}
+
+.cal-hour-block.task-block {
+  border-left-color: #9bff33;
+}
+
+.cal-hour-block.habit-block {
+  border-left-color: #ffcc00;
+}
+
+.cal-hour-time {
+  font-family: var(--font-pixel);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.cal-hour-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cal-hour-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.cal-hour-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+/* ═══════════════════════════════════════════════════════════
+   NUEVA FUNCIONALIDAD (AGREGADO AL FINAL - NO BORRAR NADA ARRIBA)
+   ═══════════════════════════════════════════════════════════ */
+
+/* ═══ PANELES A PANTALLA COMPLETA ═══ */
+#screen-dashboard {
+  display: none;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  position: relative;
+  z-index: 2;
+  height: 100vh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+#screen-dashboard.active {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* ═══ PANELES DE STICKERS CON FONDOS ═══ */
+.sticker-board {
+  position: relative !important;
+  flex: 1 !important;
+  width: 100% !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+  background-color: transparent !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+#panel-tasks {
+  background-image: url('../images/bg-tareas.jpg') !important;
+}
+
+#panel-habits {
+  background-image: url('../images/bg-habitos.jpg') !important;
+}
+
+#panel-reminders {
+  background-image: url('../images/bg-recordatorios.jpg') !important;
+}
+
+#panel-calendar {
+  background-image: url('../images/bg-calendario.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  padding: 2rem !important;
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+  flex: 1 !important;
+  overflow-y: auto !important;
+}
+
+#panel-gebebot {
+  background-image: url('../images/bg-gebebot.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  padding: 2rem !important;
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+  flex: 1 !important;
+  overflow-y: auto !important;
+}
+
+/* ═══ CONTENEDOR DE STICKERS ═══ */
+.sticker-container {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+/* ═══ STICKERS ARRASTRABLES ═══ */
+.sticker {
+  position: absolute;
+  width: 280px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  cursor: move;
+  user-select: none;
+  touch-action: none;
+  overflow: hidden;
+  transition: box-shadow 0.25s ease;
+}
+
+.sticker:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.35),
+    0 0 0 2px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.sticker.clicked {
+  animation: stickerShake 0.4s ease-in-out;
+}
+
+@keyframes stickerShake {
+  0%, 100% { transform: translateY(-8px) scale(1.02) rotate(var(--rest-rot, 0deg)); }
+  20% { transform: translateY(-8px) scale(1.02) rotate(calc(var(--rest-rot, 0deg) - 3deg)); }
+  40% { transform: translateY(-8px) scale(1.02) rotate(calc(var(--rest-rot, 0deg) + 3deg)); }
+  60% { transform: translateY(-8px) scale(1.02) rotate(calc(var(--rest-rot, 0deg) - 2deg)); }
+  80% { transform: translateY(-8px) scale(1.02) rotate(calc(var(--rest-rot, 0deg) + 2deg)); }
+}
+
+.sticker.dragging {
+  cursor: grabbing;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.4),
+    0 0 0 2px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: none;
+}
+
+.sticker-header {
+  padding: 1.5rem 1rem 1rem;
+  text-align: center;
+  position: relative;
+  background: var(--sticker-color, #4CAF50);
+}
+
+.sticker-title {
+  font-family: var(--font-graffiti);
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  line-height: 1;
+  letter-spacing: 2px;
+}
+
+.sticker-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.95);
+  margin-top: 0.5rem;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.sticker-body {
+  padding: 1rem;
+  background: #fff;
+  min-height: 80px;
+}
+
+.sticker-text {
+  font-family: var(--font-handwritten);
+  font-size: 1.2rem;
+  color: var(--text);
+  font-weight: 500;
+  word-break: break-word;
+  text-align: center;
+}
+
+.sticker-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.sticker-footer {
+  height: 20px;
+  background: var(--sticker-color, #4CAF50);
+  position: relative;
+}
+
+.sticker-fold-tl::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 30px 30px 0 0;
+  border-color: rgba(0, 0, 0, 0.15) transparent transparent transparent;
+  z-index: 10;
+}
+
+.sticker-fold-tr::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 30px 30px 0;
+  border-color: transparent rgba(0, 0, 0, 0.15) transparent transparent;
+  z-index: 10;
+}
+
+.sticker-fold-bl::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 30px 30px;
+  border-color: transparent transparent rgba(0, 0, 0, 0.15) transparent;
+  z-index: 10;
+}
+
+.sticker-fold-br::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 30px 0 0 30px;
+  border-color: transparent transparent transparent rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.sticker-wrinkles-1 {
+  background-image: 
+    linear-gradient(45deg, transparent 48%, rgba(0,0,0,0.03) 50%, transparent 52%),
+    linear-gradient(-30deg, transparent 49%, rgba(0,0,0,0.02) 50%, transparent 51%);
+}
+
+.sticker-wrinkles-2 {
+  background-image: 
+    linear-gradient(60deg, transparent 47%, rgba(0,0,0,0.025) 50%, transparent 53%),
+    linear-gradient(-45deg, transparent 48%, rgba(0,0,0,0.02) 50%, transparent 52%);
+}
+
+.sticker-wrinkles-3 {
+  background-image: 
+    linear-gradient(30deg, transparent 49%, rgba(0,0,0,0.02) 50%, transparent 51%),
+    linear-gradient(-60deg, transparent 47%, rgba(0,0,0,0.025) 50%, transparent 53%);
+}
+
+/* ═══ BOTONES DE SEÑAL DE TRÁFICO (SOLO IMAGEN, SIN CUADROS) ═══ */
+#btn-add-task,
+#btn-add-habit,
+#btn-add-reminder {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  text-shadow: none !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: block !important;
+  cursor: pointer !important;
+  position: fixed !important;
+  z-index: 9999 !important;
+  transition: transform 0.2s ease, filter 0.2s ease !important;
+}
+
+#btn-add-task img,
+#btn-add-habit img,
+#btn-add-reminder img {
+  display: block !important;
+  width: 120px !important;
+  height: 120px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  image-rendering: pixelated !important;
+  image-rendering: -moz-crisp-edges !important;
+  image-rendering: crisp-edges !important;
+}
+
+#btn-add-task {
+  left: 20px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+#btn-add-habit {
+  right: 20px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+#btn-add-reminder {
+  bottom: 20px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+#btn-add-task:hover {
+  transform: translateY(-50%) scale(1.15) !important;
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(76, 175, 80, 0.6)) !important;
+}
+
+#btn-add-habit:hover {
+  transform: translateY(-50%) scale(1.15) !important;
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(255, 193, 7, 0.6)) !important;
+}
+
+#btn-add-reminder:hover {
+  transform: translateX(-50%) scale(1.15) !important;
+  filter: brightness(1.2) drop-shadow(0 0 10px rgba(33, 150, 243, 0.6)) !important;
+}
+
+#btn-add-task:active,
+#btn-add-habit:active,
+#btn-add-reminder:active {
+  transform: translateY(-50%) scale(0.95) !important;
+}
+
+#btn-add-reminder:active {
+  transform: translateX(-50%) scale(0.95) !important;
+}
+
+/* ═══ RESPONSIVE PARA MÓVIL ═══ */
+@media (max-width: 768px) {
+  #btn-add-task img,
+  #btn-add-habit img,
+  #btn-add-reminder img {
+    width: 90px !important;
+    height: 90px !important;
+  }
+  
+  #btn-add-task { left: 10px !important; }
+  #btn-add-habit { right: 10px !important; }
+  #btn-add-reminder { bottom: 10px !important; }
+  
+  .sticker {
+    width: 240px;
+  }
+  
+  .sticker-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  #btn-add-task img,
+  #btn-add-habit img,
+  #btn-add-reminder img {
+    width: 70px !important;
+    height: 70px !important;
+  }
+}
+/* ═══════════════════════════════════════════════════════════
+NUEVA FUNCIONALIDAD (AGREGADO AL FINAL - NO BORRAR NADA ARRIBA)
+═══════════════════════════════════════════════════════════ */
+
+/* ═══ PANELES A PANTALLA COMPLETA ═══ */
+#screen-dashboard {
+  display: none;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  position: relative;
+  z-index: 2;
+  height: 100vh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+#screen-dashboard.active {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* ═══ PANELES DE STICKERS CON FONDOS ═══ */
+.sticker-board {
+  position: relative !important;
+  flex: 1 !important;
+  width: 100% !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+  background-color: transparent !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
+#panel-tasks {
+  background-image: url('../images/bg-tareas.jpg') !important;
+}
+
+#panel-habits {
+  background-image: url('../images/bg-habitos.jpg') !important;
+}
+
+#panel-reminders {
+  background-image: url('../images/bg-recordatorios.jpg') !important;
+}
+
+#panel-calendar {
+  background-image: url('../images/bg-calendario.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  padding: 2rem !important;
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+  flex: 1 !important;
+  overflow-y: auto !important;
+}
+
+#panel-gebebot {
+  background-image: url('../images/bg-gebebot.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  padding: 2rem !important;
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+  flex: 1 !important;
+  overflow-y: auto !important;
+}
+
+/* ═══ CONTENEDOR DE STICKERS ═══ */
+.sticker-container {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+}
+
+/* ═══ STICKERS ARRASTRABLES ═══ */
+.sticker {
+  position: absolute;
+  width: 280px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  cursor: move;
+  user-select: none;
+  touch-action: none;
+  overflow: hidden;
+  transition: box-shadow 0.25s ease;
+}
+
+/* (Aquí irían el resto de estilos de stickers, pero solo necesitas pegar hasta aquí) */
+
+/* ═══ BOTONES DE SEÑAL DE TRÁFICO (SOLO IMAGEN, SIN CUADROS) ═══ */
+#btn-add-task,
+#btn-add-habit,
+#btn-add-reminder {
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  text-shadow: none !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: block !important;
+  cursor: pointer !important;
+  position: fixed !important;
+  z-index: 9999 !important;
+  transition: transform 0.2s ease, filter 0.2s ease !important;
+}
+
+/* (Y el resto de estilos de los botones) */
+/* ═══════════════════════════════════════════════════════════
+   BLOQUEO DE SCROLL EXTERIOR (evita que se vea el fondo original
+   detrás de los boards al desplazarse dentro de una pestaña)
+   ═══════════════════════════════════════════════════════════ */
+html:has(#screen-dashboard.active),
+body:has(#screen-dashboard.active) {
+  height: 100vh !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVEGACIÓN POR FLECHAS + DOTS (reemplaza el header de tabs)
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --arrow-prev-color: rgba(255, 255, 255, 0.55);
+  --arrow-prev-color-solid: #4CAF50;
+  --arrow-next-color: rgba(255, 255, 255, 0.55);
+  --arrow-next-color-solid: #4CAF50;
+}
+
+.tab-arrow {
+  position: absolute;
+  top: 14px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.6rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 600;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.2s ease, transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.tab-arrow-prev { left: 14px; }
+.tab-arrow-next { right: 14px; }
+
+.tab-arrow-prev:hover,
+.tab-arrow-prev:focus-visible {
+  background: var(--arrow-prev-color);
+}
+.tab-arrow-next:hover,
+.tab-arrow-next:focus-visible {
+  background: var(--arrow-next-color);
+}
+
+.tab-arrow-prev:active {
+  background: var(--arrow-prev-color-solid);
+  transform: scale(1.25);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+.tab-arrow-next:active {
+  background: var(--arrow-next-color-solid);
+  transform: scale(1.25);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+
+.tab-dots {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 600;
+  padding: 7px 10px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.tab-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.tab-dot.active {
+  width: 24px;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.25);
+}
+
+@media (max-width: 480px) {
+  .tab-arrow { width: 38px; height: 38px; font-size: 1.3rem; top: 10px; }
+  .tab-arrow-prev { left: 10px; }
+  .tab-arrow-next { right: 10px; }
+  .tab-dots { top: 14px; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PANELES: TRANSICIÓN DE SLIDE ENTRE PESTAÑAS
+   ═══════════════════════════════════════════════════════════ */
+
+.tab-panels {
+  position: relative !important;
+  flex: 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.tab-panel {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(0%);
+  transition: transform 0.45s cubic-bezier(0.65, 0, 0.35, 1), opacity 0.3s ease;
+  z-index: 1;
+}
+
+.tab-panel.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(0%);
+  z-index: 2;
+}
+
+.tab-panel.slide-in-right { opacity: 1; transform: translateX(100%); z-index: 2; }
+.tab-panel.slide-in-left  { opacity: 1; transform: translateX(-100%); z-index: 2; }
+.tab-panel.slide-out-left  { opacity: 1; transform: translateX(-100%); z-index: 2; }
+.tab-panel.slide-out-right { opacity: 1; transform: translateX(100%); z-index: 2; }
+
+/* Los botones flotantes deben ser hijos posicionados respecto a su propio
+   panel (que ahora tiene transform), no al viewport, o el slide los rompe */
+#btn-add-task,
+#btn-add-habit,
+#btn-add-reminder {
+  position: absolute !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FÍSICA DE STICKERS AL CAMBIAR DE PESTAÑA
+   (el JS aplica un transform temporal; esta transición ya
+   existente en .sticker es la que produce el rebote al soltar)
+   ═══════════════════════════════════════════════════════════ */
+.sticker {
+  will-change: transform;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FIX: SCROLL DEL CALENDARIO
+   Causa: .tab-panel es `display:flex; flex-direction:column`, así que
+   .cal-grid y .cal-detail se ENCOGÍAN (flex-shrink:1 por defecto) para
+   caber en la altura en vez de desbordarse. Y como .cal-grid tiene
+   `overflow:hidden`, su contenido quedaba recortado sin posibilidad
+   de scroll. Con flex-shrink:0 conservan su alto real y el panel
+   (que ya tiene overflow-y:auto) por fin puede desplazarse.
+   ═══════════════════════════════════════════════════════════ */
+#panel-calendar {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+#panel-calendar > * {
+  flex-shrink: 0 !important;
+}
+
+#panel-calendar .cal-grid {
+  overflow: visible !important;
+}
+
+/* Lo mismo para el panel del GEBE-BOT, que tenía el mismo problema */
+#panel-gebebot {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+#panel-gebebot > * {
+  flex-shrink: 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FÍSICA DE STICKERS
+   Matter.js razona con el CENTRO de cada cuerpo, así que el sticker
+   se ancla por su centro. physics.js escribe left/top/transform.
+   ═══════════════════════════════════════════════════════════ */
+.sticker {
+  transform-origin: center center;
+  will-change: transform, left, top;
+  /* La transición de transform pelearía con la física frame a frame */
+  transition: box-shadow 0.25s ease !important;
+}
+
+.sticker.dragging {
+  cursor: grabbing;
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.45),
+    0 0 0 2px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+/* El :hover de CSS animaba `transform`, pero physics.js lo escribe
+   inline cada frame (y el inline gana). Se elimina para que no
+   compita: el "peso" ahora se siente con la física, no con un lift. */
+.sticker:hover {
+  transform: none;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.35),
+    0 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+/* El contenedor de stickers debe dejar pasar los eventos a Matter */
+.sticker-container {
+  touch-action: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FIX: TÍTULO DEL MES QUE SE DESBORDA
+   "SEPTIEMBRE", "NOVIEMBRE", "DICIEMBRE" no cabían con el tamaño fijo.
+   Ahora escala con el ancho disponible y nunca se sale.
+   ═══════════════════════════════════════════════════════════ */
+#cal-title {
+  font-size: clamp(1.1rem, 4.5vw, 2rem) !important;
+  letter-spacing: 0 !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  min-width: 0;
+  text-align: center;
+  flex: 1 1 auto;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.calendar-header button {
+  flex: 0 0 auto;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FIX: ALTURA CONSTANTE DEL CALENDARIO
+   calendar.js ahora siempre genera 42 celdas (6 semanas), así que
+   fijamos las 6 filas para que el recuadro mida igual todos los meses.
+   ═══════════════════════════════════════════════════════════ */
+.cal-grid-days {
+  grid-template-rows: repeat(6, 1fr) !important;
+}
+
+.cal-day {
+  aspect-ratio: 1 / 1;
+  min-height: 0 !important;
+}
+
+.cal-day.empty {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ESTADÍSTICAS DEL GEBE-BOT — ESTILO GRAFFITI CALLEJERO
+   ═══════════════════════════════════════════════════════════ */
+.gebebot-panel,
+#panel-gebebot .stats-wrapper {
+  background: rgba(18, 16, 22, 0.86);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  border: 3px solid #111;
+  border-radius: 6px;
+  padding: 1.5rem 1.25rem;
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.08),
+    0 14px 34px rgba(0, 0, 0, 0.5);
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* Título "ESTADO REMOTO" con spray */
+#panel-gebebot h2,
+#panel-gebebot h3,
+.remote-title {
+  font-family: var(--font-display, 'Permanent Marker', cursive);
+  color: #ffd400 !important;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transform: rotate(-1.5deg);
+  text-shadow:
+    2px 2px 0 #000,
+   -1px -1px 0 #000,
+    0 0 12px rgba(255, 212, 0, 0.55);
+  margin-bottom: 1.25rem;
+}
+
+/* Cada fila de stat */
+.stat-row,
+.gebebot-stat {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr 3rem;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.stat-label,
+.gebebot-stat > span:first-child {
+  font-family: var(--font-display, 'Permanent Marker', cursive);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 2px 2px 0 #000, 0 0 6px rgba(0,0,0,0.9);
+  transform: rotate(-1deg);
+  white-space: nowrap;
+}
+
+/* Carril de la barra: cinta de obra / pared rayada */
+.stat-track,
+.gebebot-stat .bar-track {
+  position: relative;
+  height: 22px;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255,255,255,0.05) 0 6px,
+      rgba(0,0,0,0.25) 6px 12px
+    ),
+    #0d0d10;
+  border: 3px solid #000;
+  border-radius: 3px;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+
+/* Relleno: chorro de spray con brillo arriba */
+.stat-fill,
+.gebebot-stat .bar-fill {
+  position: relative;
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.45s cubic-bezier(0.34, 1.3, 0.64, 1);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.45),
+    0 0 12px currentColor;
+}
+
+/* Salpicaduras del spray en la punta de la barra */
+.stat-fill::after,
+.gebebot-stat .bar-fill::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: inherit;
+  filter: blur(2.5px);
+  opacity: 0.85;
+}
+
+/* Colores tipo lata de spray */
+.stat-hambre    .stat-fill, .gebebot-stat.hambre    .bar-fill { background: linear-gradient(180deg, #ffb23d, #f97316); color: #f97316; }
+.stat-felicidad .stat-fill, .gebebot-stat.felicidad .bar-fill { background: linear-gradient(180deg, #ff7bc0, #ec4899); color: #ec4899; }
+.stat-salud     .stat-fill, .gebebot-stat.salud     .bar-fill { background: linear-gradient(180deg, #6ee76e, #22c55e); color: #22c55e; }
+
+/* Número: etiqueta de tag */
+.stat-value,
+.gebebot-stat > span:last-child {
+  font-family: var(--font-display, 'Permanent Marker', cursive);
+  font-size: 1.1rem;
+  color: #9bff33;
+  text-align: right;
+  text-shadow: 2px 2px 0 #000;
+  transform: rotate(1.5deg);
+}
+
+/* Estado de conexión: cinta de precaución */
+.connection-status {
+  margin-top: 1.5rem;
+  padding: 0.6rem 1rem;
+  text-align: center;
+  font-family: var(--font-display, 'Permanent Marker', cursive);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #111 !important;
+  border: 3px solid #000;
+  border-radius: 3px;
+  transform: rotate(-0.6deg);
+  background: repeating-linear-gradient(
+    45deg,
+    #ffd400 0 14px,
+    #1a1a1a 14px 28px
+  );
+  text-shadow: 0 0 6px rgba(255,255,255,0.9);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+.connection-status[data-state="connected"] {
+  background: repeating-linear-gradient(45deg, #9bff33 0 14px, #1a1a1a 14px 28px);
+}
+.connection-status[data-state="error"],
+.connection-status[data-state="disconnected"] {
+  background: repeating-linear-gradient(45deg, #ff4d4d 0 14px, #1a1a1a 14px 28px);
+  color: #fff !important;
+  text-shadow: 2px 2px 0 #000;
+}
+
+@media (max-width: 480px) {
+  .stat-row,
+  .gebebot-stat {
+    grid-template-columns: 5.5rem 1fr 2.5rem;
+    gap: 0.5rem;
+  }
+  .stat-label,
+  .gebebot-stat > span:first-child { font-size: 0.8rem; }
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  FIX 1 · CALENDARIO: TAMAÑO CORRECTO                       ║
+   ║  Las reglas anteriores (aspect-ratio 1/1 + rows 1fr +      ║
+   ║  min-height:0) aplastaban las celdas. Ahora las celdas     ║
+   ║  tienen un alto mínimo real y la rejilla crece; el panel   ║
+   ║  hace scroll si hace falta.                                ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+.cal-grid-days {
+  grid-template-rows: none !important;
+  grid-auto-rows: minmax(2.9rem, auto) !important;
+  gap: 6px !important;
+}
+
+.cal-day {
+  aspect-ratio: auto !important;
+  min-height: 2.9rem !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
+  .cal-grid-days { grid-auto-rows: minmax(4rem, auto) !important; }
+  .cal-day { min-height: 4rem !important; }
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  FIX 2 · "¡HOLA!" — glifo roto                             ║
+   ║  Reticulum3.ttf no trae "¡" (U+00A1) y pinta una mancha.   ║
+   ║  La puntuación va en spans con fuente de respaldo.         ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+.sticker-title .punct {
+  font-family: "Permanent Marker", cursive;
+  font-size: 0.75em;
+  vertical-align: 0.08em;
+  margin: 0 0.04em;
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  FIX 3 · ARRUGAS Y DOBLECES NATURALES                      ║
+   ║  Antes eran triángulos y franjas grises planas. Ahora:     ║
+   ║  luz+sombra en pares (como un pliegue real), difuminadas.  ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+
+/* Papel: textura base sutil sobre el color del sticker */
+.sticker::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background-image:
+    radial-gradient(ellipse 120% 60% at 20% 0%,  rgba(255,255,255,0.30), transparent 60%),
+    radial-gradient(ellipse 100% 50% at 80% 100%, rgba(0,0,0,0.06),      transparent 65%);
+  mix-blend-mode: soft-light;
+  opacity: 0.9;
+}
+
+/* Un pliegue = línea de LUZ pegada a una línea de SOMBRA, difuminadas.
+   Eso es lo que el ojo lee como "doblez", no una franja gris. */
+.sticker-wrinkles-1,
+.sticker-wrinkles-2,
+.sticker-wrinkles-3 {
+  background-image: none !important;   /* borra las franjas grises viejas */
+}
+
+.sticker-wrinkles-1::before,
+.sticker-wrinkles-2::before,
+.sticker-wrinkles-3::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+}
+
+.sticker-wrinkles-1::before {
+  background-image:
+    linear-gradient(102deg, transparent 27%, rgba(255,255,255,0.55) 29.4%, rgba(0,0,0,0.22) 31.2%, transparent 34%),
+    linear-gradient(78deg,  transparent 62%, rgba(255,255,255,0.38) 64.2%, rgba(0,0,0,0.16) 66%,   transparent 69%),
+    linear-gradient(168deg, transparent 44%, rgba(255,255,255,0.30) 46.5%, rgba(0,0,0,0.12) 48%,   transparent 51%);
+  filter: blur(0.6px);
+}
+
+.sticker-wrinkles-2::before {
+  background-image:
+    linear-gradient(65deg,  transparent 18%, rgba(255,255,255,0.50) 20.5%, rgba(0,0,0,0.20) 22.4%, transparent 25%),
+    linear-gradient(-52deg, transparent 51%, rgba(255,255,255,0.42) 53.5%, rgba(0,0,0,0.18) 55.2%, transparent 58%),
+    linear-gradient(140deg, transparent 74%, rgba(255,255,255,0.28) 76%,   rgba(0,0,0,0.11) 77.6%, transparent 80%);
+  filter: blur(0.7px);
+}
+
+.sticker-wrinkles-3::before {
+  background-image:
+    linear-gradient(-70deg, transparent 33%, rgba(255,255,255,0.48) 35.4%, rgba(0,0,0,0.19) 37%, transparent 40%),
+    linear-gradient(112deg, transparent 57%, rgba(255,255,255,0.36) 59.4%, rgba(0,0,0,0.15) 61%, transparent 64%),
+    linear-gradient(22deg,  transparent 12%, rgba(255,255,255,0.26) 14%,   rgba(0,0,0,0.10) 15.6%, transparent 18%);
+  filter: blur(0.65px);
+}
+
+/* Dobleces de esquina: papel levantado real (luz arriba, sombra proyectada),
+   no un triángulo gris plano */
+.sticker-fold-tl::before,
+.sticker-fold-tr::before,
+.sticker-fold-bl::before,
+.sticker-fold-br::before {
+  content: "";
+  position: absolute;
+  width: 34px;
+  height: 34px;
+  z-index: 12;
+  border: none !important;
+  pointer-events: none;
+  background: linear-gradient(135deg, #ffffff 0%, #f0ece4 45%, #d6cfc2 100%);
+  box-shadow: -2px 2px 6px rgba(0,0,0,0.28);
+}
+
+.sticker-fold-tl::before {
+  top: 0; left: 0;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+  background: linear-gradient(135deg, #fff 0%, #efeae1 55%, #cfc7b9 100%);
+  box-shadow: 3px 3px 7px rgba(0,0,0,0.25);
+}
+.sticker-fold-tr::before {
+  top: 0; right: 0;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  background: linear-gradient(225deg, #fff 0%, #efeae1 55%, #cfc7b9 100%);
+  box-shadow: -3px 3px 7px rgba(0,0,0,0.25);
+}
+.sticker-fold-bl::before {
+  bottom: 0; left: 0;
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+  background: linear-gradient(45deg, #fff 0%, #efeae1 55%, #cfc7b9 100%);
+  box-shadow: 3px -3px 7px rgba(0,0,0,0.25);
+}
+.sticker-fold-br::before {
+  bottom: 0; right: 0;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  background: linear-gradient(315deg, #fff 0%, #efeae1 55%, #cfc7b9 100%);
+  box-shadow: -3px -3px 7px rgba(0,0,0,0.25);
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  REDISEÑO · SPLATOON / URBANO CAÓTICO                      ║
+   ║  Tinta, stencil, cinta, bordes negros gruesos, todo torcido║
+   ╚═══════════════════════════════════════════════════════════╝ */
+
+:root {
+  --ink-lime:    #9bf300;
+  --ink-magenta: #ff2d94;
+  --ink-cyan:    #00e5ff;
+  --ink-orange:  #ff6b00;
+  --ink-purple:  #7b2fff;
+  --ink-black:   #12101a;
+  --ink-paper:   #f4f1e8;
+}
+
+/* ═══ BOTONES: bloque de tinta con borde negro grueso ═══ */
+.btn,
+.btn-primary,
+.btn-danger,
+.btn-ghost,
+.auth-tab,
+.tab,
+.btn-icon-nav {
+  position: relative;
+  font-family: var(--font-graffiti), "Permanent Marker", cursive;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--ink-black);
+  border: 3px solid var(--ink-black) !important;
+  border-radius: 4px !important;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transform: skewX(-7deg) rotate(-0.8deg);
+  transition: transform 0.12s cubic-bezier(0.34, 1.6, 0.5, 1),
+              filter 0.12s ease,
+              box-shadow 0.12s ease;
+  box-shadow: 4px 4px 0 var(--ink-black);
+  -webkit-tap-highlight-color: transparent;
+  overflow: visible;
+}
+
+/* El texto va derecho aunque el botón esté torcido */
+.btn > *,
+.btn-primary > *,
+.auth-tab > *,
+.tab > * {
+  display: inline-block;
+  transform: skewX(7deg);
+}
+
+.btn:hover,
+.btn-primary:hover,
+.auth-tab:hover,
+.tab:hover {
+  transform: skewX(-7deg) rotate(-0.8deg) translate(-2px, -2px) scale(1.03);
+  box-shadow: 7px 7px 0 var(--ink-black);
+  filter: saturate(1.25);
+}
+
+.btn:active,
+.btn-primary:active,
+.auth-tab:active,
+.tab:active {
+  transform: skewX(-7deg) rotate(-0.8deg) translate(3px, 3px) scale(0.97);
+  box-shadow: 1px 1px 0 var(--ink-black);
+}
+
+.btn-primary { background: var(--ink-lime) !important; }
+.btn-danger  { background: var(--ink-magenta) !important; color: #fff; }
+.btn-ghost   { background: var(--ink-paper) !important; }
+
+/* Salpicadura de tinta detrás del botón primario */
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: -8px -12px;
+  z-index: -1;
+  background: var(--ink-lime);
+  opacity: 0.35;
+  clip-path: polygon(
+    4% 30%, 14% 8%, 30% 18%, 44% 2%, 58% 16%, 74% 6%,
+    88% 22%, 98% 44%, 92% 68%, 99% 88%, 78% 96%, 60% 88%,
+    42% 99%, 26% 86%, 8% 92%, 2% 66%
+  );
+  filter: blur(1px);
+}
+
+/* ═══ TABS: pegatinas superpuestas ═══ */
+.tab-nav,
+.auth-tabs {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.tab { background: var(--ink-paper) !important; }
+.tab:nth-child(1) { transform: skewX(-7deg) rotate(-1.6deg); }
+.tab:nth-child(2) { transform: skewX(-7deg) rotate(1.1deg); }
+.tab:nth-child(3) { transform: skewX(-7deg) rotate(-0.6deg); }
+.tab:nth-child(4) { transform: skewX(-7deg) rotate(1.7deg); }
+.tab:nth-child(5) { transform: skewX(-7deg) rotate(-1.2deg); }
+
+.tab.active,
+.auth-tab.active {
+  color: var(--ink-black);
+  box-shadow: 5px 5px 0 var(--ink-black), 0 0 22px rgba(155, 243, 0, 0.55);
+  z-index: 5;
+}
+.tab-tasks.active     { background: var(--ink-lime)    !important; }
+.tab-habits.active    { background: var(--ink-orange)  !important; }
+.tab-reminders.active { background: var(--ink-cyan)    !important; }
+.tab-calendar.active  { background: var(--ink-magenta) !important; color: #fff; }
+.tab-gebebot.active   { background: var(--ink-purple)  !important; color: #fff; }
+.auth-tab.active      { background: var(--ink-lime)    !important; }
+
+/* ═══ FLECHAS DE PESTAÑA (si usas la navegación por flechas) ═══ */
+.tab-arrow {
+  border: 3px solid var(--ink-black) !important;
+  box-shadow: 4px 4px 0 var(--ink-black);
+  border-radius: 4px !important;
+  font-family: var(--font-graffiti), cursive;
+}
+.tab-arrow:active {
+  box-shadow: 1px 1px 0 var(--ink-black);
+}
+
+/* ═══ MODAL: cartel pegado a la pared, con cinta ═══ */
+.modal {
+  background: var(--ink-paper) !important;
+  border: 4px solid var(--ink-black) !important;
+  border-radius: 6px !important;
+  box-shadow:
+    10px 10px 0 var(--ink-black),
+    0 24px 60px rgba(0, 0, 0, 0.55) !important;
+  transform: rotate(-0.7deg);
+  overflow: visible !important;
+  padding: 0 !important;
+}
+
+.modal::backdrop {
+  background: rgba(10, 8, 16, 0.78);
+  backdrop-filter: blur(3px);
+}
+
+/* Cinta adhesiva en las esquinas del modal */
+.modal::before,
+.modal::after {
+  content: "";
+  position: absolute;
+  width: 90px;
+  height: 30px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.55) 0 6px,
+    rgba(220, 215, 195, 0.55) 6px 12px
+  );
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  z-index: 20;
+}
+.modal::before { top: -14px; left: -22px;  transform: rotate(-28deg); }
+.modal::after  { top: -14px; right: -22px; transform: rotate(26deg); }
+
+.modal form { padding: 1.75rem 1.5rem 1.5rem; }
+
+/* ═══ ETIQUETA DEL MODAL: tag de spray ═══ */
+.modal-header-tag {
+  font-family: var(--font-graffiti), cursive;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 1.5rem;
+  color: #fff;
+  padding: 0.7rem 1.4rem;
+  border: 3px solid var(--ink-black);
+  border-radius: 4px;
+  transform: rotate(-2deg) skewX(-6deg);
+  box-shadow: 5px 5px 0 var(--ink-black);
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+}
+.modal-header-tag.task     { background: var(--ink-lime);    color: var(--ink-black); }
+.modal-header-tag.habit    { background: var(--ink-orange); }
+.modal-header-tag.reminder { background: var(--ink-cyan);    color: var(--ink-black); }
+
+/* ═══ INPUTS: casilla de stencil ═══ */
+.modal input[type="text"],
+.modal input[type="date"],
+.modal input[type="time"],
+.modal input[type="number"],
+.modal textarea,
+.modal select,
+.auth-card input {
+  background: #fff !important;
+  border: 3px solid var(--ink-black) !important;
+  border-radius: 3px !important;
+  padding: 0.7rem 0.9rem !important;
+  font-family: var(--font-body);
+  font-weight: 600;
+  box-shadow: inset 3px 3px 0 rgba(0, 0, 0, 0.07);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  width: 100%;
+}
+
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus,
+.auth-card input:focus {
+  outline: none !important;
+  transform: translate(-2px, -2px);
+  box-shadow:
+    4px 4px 0 var(--ink-lime),
+    inset 2px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.modal label,
+.form-group label {
+  font-family: var(--font-graffiti), cursive;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.85rem;
+  color: var(--ink-black);
+  display: block;
+  margin-bottom: 0.35rem;
+  transform: rotate(-0.8deg);
+}
+
+.form-row {
+  display: flex;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+.form-group { flex: 1 1 45%; min-width: 0; }
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 3px dashed rgba(18, 16, 26, 0.25);
+}
+
+/* ═══ BOTONES FLOTANTES DE AGREGAR: sello de tinta ═══ */
+.btn-add {
+  filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.85));
+  transition: transform 0.15s cubic-bezier(0.34, 1.6, 0.5, 1), filter 0.15s ease;
+}
+.btn-add:hover {
+  transform: scale(1.12) rotate(-5deg);
+  filter: drop-shadow(7px 7px 0 rgba(0, 0, 0, 0.85)) saturate(1.35);
+}
+.btn-add:active {
+  transform: scale(0.94) rotate(3deg);
+}
+
+/* ═══ NAVEGACIÓN DEL CALENDARIO ═══ */
+.btn-icon-nav {
+  background: var(--ink-paper) !important;
+  padding: 0.35rem 0.9rem !important;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+/* ═══ CELDAS DEL CALENDARIO: azulejos de calle ═══ */
+.cal-day {
+  border: 2px solid var(--ink-black) !important;
+  border-radius: 3px !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  font-family: var(--font-body);
+  font-weight: 700;
+  transition: transform 0.12s cubic-bezier(0.34, 1.6, 0.5, 1), box-shadow 0.12s ease;
+  cursor: pointer;
+}
+.cal-day:not(.empty):hover {
+  transform: translate(-2px, -2px) rotate(-1.5deg);
+  box-shadow: 4px 4px 0 var(--ink-black);
+  z-index: 3;
+}
+.cal-day.today {
+  background: var(--ink-lime) !important;
+  box-shadow: 3px 3px 0 var(--ink-black);
+  transform: rotate(-2deg);
+}
+.cal-day.selected {
+  background: var(--ink-magenta) !important;
+  color: #fff;
+  box-shadow: 4px 4px 0 var(--ink-black);
+  transform: rotate(1.5deg) scale(1.06);
+  z-index: 4;
+}
+.cal-day.future { opacity: 0.65; }
+
+.cal-grid-head > * {
+  font-family: var(--font-graffiti), cursive;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 2px 2px 0 var(--ink-black);
+}
+
+@media (max-width: 480px) {
+  .btn, .btn-primary, .btn-ghost, .btn-danger, .tab, .auth-tab {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    box-shadow: 3px 3px 0 var(--ink-black);
+  }
+  .modal::before, .modal::after { width: 60px; height: 22px; }
+  .form-group { flex: 1 1 100%; }
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  FIX · MODAL: ancho estable + scroll interno               ║
+   ║  1) Sin ancho fijo, el diálogo crecía al escribir → se     ║
+   ║     "movía a los lados". Ahora el ancho es fijo.           ║
+   ║  2) `overflow: visible` (necesario para que la cinta se    ║
+   ║     salga) mataba el scroll → no se llegaba a Guardar.     ║
+   ║     El scroll ahora vive DENTRO del <form>.                ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+.modal {
+  width: min(92vw, 560px) !important;
+  max-width: min(92vw, 560px) !important;
+  max-height: 90vh !important;
+  box-sizing: border-box;
+  /* El modal NO scrollea (para no cortar la cinta); scrollea el form */
+  overflow: visible !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal.modal-large {
+  width: min(94vw, 640px) !important;
+  max-width: min(94vw, 640px) !important;
+}
+
+.modal form {
+  max-height: 86vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+  /* aire abajo para que los botones nunca queden pegados al borde */
+  padding: 1.75rem 1.5rem 1.75rem !important;
+}
+
+/* Sin esto, los bordes de 3px hacían desbordar los inputs al 100% */
+.modal *,
+.modal *::before,
+.modal *::after {
+  box-sizing: border-box;
+}
+
+.modal input,
+.modal textarea,
+.modal select {
+  max-width: 100%;
+}
+
+/* El "despegue" al enfocar movía el layout en algunos navegadores.
+   Lo dejamos solo como sombra, sin desplazamiento. */
+.modal input:focus,
+.modal textarea:focus,
+.modal select:focus,
+.auth-card input:focus {
+  transform: none !important;
+  box-shadow:
+    4px 4px 0 var(--ink-lime),
+    inset 2px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Los botones de acción siempre visibles al fondo del form */
+.modal-actions {
+  position: sticky;
+  bottom: -1.75rem;
+  background: var(--ink-paper);
+  margin: 1.5rem -1.5rem -1.75rem;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 3px dashed rgba(18, 16, 26, 0.25);
+  z-index: 10;
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  GEBE-BOT: PAPEL PEGADO CON CINTA (como el modal)          ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+#panel-gebebot .gebebot-panel,
+#panel-gebebot .stats-wrapper,
+.gebebot-panel {
+  position: relative;
+  background: var(--ink-paper) !important;
+  border: 4px solid var(--ink-black) !important;
+  border-radius: 6px !important;
+  box-shadow:
+    10px 10px 0 var(--ink-black),
+    0 24px 60px rgba(0, 0, 0, 0.5) !important;
+  transform: rotate(-0.9deg);
+  padding: 2rem 1.5rem !important;
+  max-width: 620px;
+  margin: 2.5rem auto !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  overflow: visible;
+}
+
+/* Cinta adhesiva en las 4 esquinas */
+.gebebot-panel::before,
+.gebebot-panel::after,
+#panel-gebebot .gebebot-panel::before,
+#panel-gebebot .gebebot-panel::after {
+  content: "";
+  position: absolute;
+  width: 90px;
+  height: 30px;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.6) 0 6px,
+    rgba(216, 210, 190, 0.6) 6px 12px
+  );
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.32);
+  z-index: 20;
+}
+.gebebot-panel::before { top: -14px; left: -24px;  transform: rotate(-27deg); }
+.gebebot-panel::after  { top: -14px; right: -24px; transform: rotate(25deg); }
+
+/* Textos sobre papel: ahora oscuros, no blancos */
+#panel-gebebot h2,
+#panel-gebebot h3,
+.remote-title {
+  color: var(--ink-black) !important;
+  text-shadow: 3px 3px 0 var(--ink-lime) !important;
+  transform: rotate(-1.6deg) skewX(-5deg);
+  font-size: 1.9rem;
+}
+
+.stat-label,
+.gebebot-stat > span:first-child {
+  color: var(--ink-black) !important;
+  text-shadow: none !important;
+}
+
+.stat-value,
+.gebebot-stat > span:last-child {
+  color: var(--ink-black) !important;
+  text-shadow: 2px 2px 0 var(--ink-lime) !important;
+}
+
+/* Carril de la barra sobre papel */
+.stat-track,
+.gebebot-stat .bar-track {
+  background: #fff !important;
+  border: 3px solid var(--ink-black) !important;
+  box-shadow: inset 3px 3px 0 rgba(0, 0, 0, 0.08) !important;
+  border-radius: 3px !important;
+  height: 24px;
+}
+
+.stat-fill,
+.gebebot-stat .bar-fill {
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  MANCHAS DE PINTURA AL HACER CLICK                         ║
+   ║  app.js las genera; aquí viven la forma y la animación.    ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+.ink-splat {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  width: 120px;
+  height: 120px;
+  transform: translate(-50%, -50%) scale(0) rotate(var(--spin, 0deg));
+  opacity: 0;
+  clip-path: polygon(
+    50% 0%, 62% 16%, 78% 8%, 76% 26%, 94% 24%, 84% 40%,
+    100% 50%, 84% 60%, 94% 76%, 76% 74%, 78% 92%, 62% 84%,
+    50% 100%, 38% 84%, 22% 92%, 24% 74%, 6% 76%, 16% 60%,
+    0% 50%, 16% 40%, 6% 24%, 24% 26%, 22% 8%, 38% 16%
+  );
+  animation: inkSplat 0.62s cubic-bezier(0.2, 1.5, 0.4, 1) forwards;
+}
+
+@keyframes inkSplat {
+  0%   { transform: translate(-50%, -50%) scale(0)    rotate(var(--spin, 0deg)); opacity: 0.95; }
+  45%  { transform: translate(-50%, -50%) scale(1.15) rotate(calc(var(--spin, 0deg) + 22deg)); opacity: 0.85; }
+  100% { transform: translate(-50%, -50%) scale(1.5)  rotate(calc(var(--spin, 0deg) + 40deg)); opacity: 0; }
+}
+
+/* Gotitas que salen disparadas */
+.ink-drop {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: inkDrop 0.75s cubic-bezier(0.15, 0.9, 0.3, 1) forwards;
+}
+
+@keyframes inkDrop {
+  0%   { transform: translate(-50%, -50%) translate(0, 0) scale(1); opacity: 0.9; }
+  100% {
+    transform: translate(-50%, -50%)
+               translate(var(--dx, 0px), var(--dy, 0px))
+               scale(0.25);
+    opacity: 0;
+  }
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  FIX DEFINITIVO · MODAL                                    ║
+   ║                                                            ║
+   ║  BUG A — "se mueve a la derecha, no se quita":             ║
+   ║    Por spec de CSS, si overflow-y != visible entonces      ║
+   ║    overflow-x se computa a `auto` automáticamente. Los     ║
+   ║    elementos con skewX/rotate se desbordaban a los lados   ║
+   ║    → barra de scroll horizontal fantasma. Se mata con      ║
+   ║    overflow-x: hidden explícito.                           ║
+   ║                                                            ║
+   ║  BUG B — "no aparece el ¡HOLA! MI TAREA ES...":            ║
+   ║    Ese mismo overflow del <form> recortaba la etiqueta,    ║
+   ║    que está rotada y se salía por arriba. Se arregla con   ║
+   ║    espacio superior y menos rotación.                      ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+
+.modal {
+  /* `display:flex` rompía el centrado nativo del <dialog>.
+     El diálogo se centra solo con su `margin:auto`. */
+  display: block !important;
+  width: min(92vw, 560px) !important;
+  max-width: min(92vw, 560px) !important;
+  max-height: 90vh !important;
+  overflow: visible !important;   /* para que la cinta se salga del marco */
+  transform: rotate(-0.6deg);
+  box-sizing: border-box;
+  padding: 0 !important;
+}
+
+.modal[open] { display: block !important; }
+.modal:not([open]) { display: none !important; }
+
+.modal.modal-large {
+  width: min(94vw, 640px) !important;
+  max-width: min(94vw, 640px) !important;
+}
+
+.modal form {
+  /* ESTA línea es la que mata el scroll lateral fantasma */
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+
+  max-height: 86vh;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+
+  /* Aire arriba: si no, el <form> recorta la etiqueta rotada */
+  padding: 2.25rem 1.5rem 1.5rem !important;
+}
+
+/* La etiqueta ya no se sale del área visible */
+.modal-header-tag {
+  transform: rotate(-1.2deg) skewX(-4deg);
+  margin: 0 0 1.25rem 0 !important;
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+  font-size: clamp(1rem, 4vw, 1.4rem);
+  line-height: 1.25;
+}
+
+/* Nada dentro del modal puede desbordar a los lados */
+.modal form > *,
+.modal .form-row,
+.modal .form-group {
+  max-width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+/* Los botones inclinados ya no empujan el ancho */
+.modal-actions {
+  position: sticky;
+  bottom: 0;
+  background: var(--ink-paper);
+  margin: 1.5rem -1.5rem -1.5rem;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 3px dashed rgba(18, 16, 26, 0.25);
+  z-index: 10;
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+
+/* Menos inclinación dentro del modal, para que no se desborden */
+.modal-actions .btn,
+.modal-actions .btn-primary,
+.modal-actions .btn-ghost,
+.modal-actions .btn-danger {
+  transform: skewX(-4deg) rotate(-0.5deg);
+  flex: 0 1 auto;
+  white-space: nowrap;
+}
+.modal-actions .btn:hover,
+.modal-actions .btn-primary:hover,
+.modal-actions .btn-ghost:hover,
+.modal-actions .btn-danger:hover {
+  transform: skewX(-4deg) rotate(-0.5deg) translate(-2px, -2px);
+}
+.modal-actions .btn:active,
+.modal-actions .btn-primary:active,
+.modal-actions .btn-ghost:active,
+.modal-actions .btn-danger:active {
+  transform: skewX(-4deg) rotate(-0.5deg) translate(2px, 2px);
+}
+
+/* Y por si acaso: que la página nunca scrollee de lado */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100%;
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  FIX FINAL · "¡HOLA! MI TAREA ES…" CORTADO                 ║
+   ║  Causa real: .modal-header-tag tenía `overflow: hidden`    ║
+   ║  (línea 1347 del CSS original). La fuente Reticulum3 es    ║
+   ║  graffiti: sus letras se salen MUCHO por arriba de la caja ║
+   ║  de línea, así que el propio tag les cortaba la cabeza.    ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+.modal-header-tag {
+  overflow: visible !important;
+  padding: 1.6rem 1.4rem 1.1rem !important;
+  line-height: 1.75 !important;
+  margin: 0 0 1.4rem 0 !important;
+  transform: rotate(-1deg) skewX(-3deg);
+  display: block !important;
+  text-align: center;
+  border-radius: 4px !important;
+}
+
+/* La textura interna sí se recorta al borde del tag */
+.modal-header-tag::before {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.modal-header-tag .sticker-title,
+.modal-header-tag h2,
+.modal-header-tag h3 {
+  overflow: visible !important;
+  line-height: 1.7 !important;
+  padding-top: 0.2em;
+}
+
+/* Y más aire arriba en el form, por si acaso */
+.modal form {
+  padding-top: 2.75rem !important;
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  GEBE-BOT · LOCKER DE CALLE                                ║
+   ║  Casillero metálico abierto: puerta con calcas, rejillas,  ║
+   ║  y las stats como equipo dentro del locker.                ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+
+#panel-gebebot .gebebot-full-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem 1rem 3rem;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* ── Cabecera: placa atornillada al locker ── */
+.gebebot-header {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+
+  background: linear-gradient(180deg, #ff6b00 0%, #e85400 100%);
+  border: 4px solid #12101a;
+  border-radius: 5px;
+  padding: 1rem 1.25rem;
+  transform: rotate(-0.8deg);
+  box-shadow: 7px 7px 0 #12101a, 0 14px 34px rgba(0,0,0,0.5);
+}
+
+/* Tornillos en las esquinas de la placa */
+.gebebot-header::before,
+.gebebot-header::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #e8e6e0, #7d7a72 60%, #3c3a35);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.6);
+}
+.gebebot-header::before { left: 8px; }
+.gebebot-header::after  { right: 8px; }
+
+.dash-title {
+  font-family: var(--font-graffiti), cursive;
+  font-size: clamp(1.4rem, 5vw, 2.1rem);
+  color: #fff !important;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.6;
+  overflow: visible;
+  margin: 0;
+  text-shadow: 3px 3px 0 #12101a, 0 0 16px rgba(255,255,255,0.35);
+}
+
+.dash-user {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #12101a !important;
+  margin: 0.15rem 0 0;
+}
+.dash-user strong { color: #12101a; }
+
+/* ── EL LOCKER ── */
+.gebebot-stats-card {
+  position: relative;
+  width: 100%;
+  max-width: 560px;
+
+  /* Chapa metálica oscura */
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.07) 0%, transparent 12%),
+    linear-gradient(90deg, rgba(0,0,0,0.35) 0%, transparent 8%, transparent 92%, rgba(0,0,0,0.35) 100%),
+    linear-gradient(160deg, #4a4a52 0%, #35343c 45%, #26252c 100%);
+
+  border: 5px solid #16151b;
+  border-radius: 8px;
+  padding: 3.4rem 1.6rem 2.2rem !important;
+  transform: rotate(0.5deg);
+  box-shadow:
+    10px 10px 0 #12101a,
+    inset 0 0 60px rgba(0,0,0,0.55),
+    0 26px 60px rgba(0,0,0,0.6);
+  overflow: visible;
+  backdrop-filter: none !important;
+}
+
+/* Rejillas de ventilación arriba */
+.gebebot-stats-card::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 62%;
+  height: 22px;
+  background: repeating-linear-gradient(
+    180deg,
+    #14131a 0 3px,
+    #55545e 3px 5px,
+    #14131a 5px 8px
+  );
+  border: 2px solid #14131a;
+  border-radius: 2px;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.85);
+}
+
+/* Manija del locker */
+.gebebot-stats-card::after {
+  content: "";
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 66px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #8d8b96, #56545e 55%, #2f2e35);
+  border: 2px solid #16151b;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.6);
+}
+
+/* ── "ESTADO REMOTO": calca pegada al metal ── */
+#panel-gebebot .section-label,
+#panel-gebebot .pixel-label {
+  display: inline-block;
+  font-family: var(--font-graffiti), cursive;
+  font-size: clamp(1rem, 4vw, 1.35rem);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #12101a !important;
+  background: var(--ink-lime);
+  border: 3px solid #12101a;
+  border-radius: 3px;
+  padding: 0.6rem 1.1rem 0.45rem;
+  line-height: 1.7;
+  overflow: visible;
+  transform: rotate(-2.2deg);
+  box-shadow: 4px 4px 0 #12101a;
+  margin: 0 0 1.75rem !important;
+  text-shadow: none !important;
+}
+
+/* ── Stats: etiquetas de equipo dentro del locker ── */
+#panel-gebebot .stat-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+#panel-gebebot .stat-row {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr 3rem;
+  align-items: center;
+  gap: 0.75rem;
+
+  background: rgba(255,255,255,0.05);
+  border: 2px solid rgba(0,0,0,0.55);
+  border-radius: 4px;
+  padding: 0.6rem 0.7rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+#panel-gebebot .stat-row:nth-child(1) { transform: rotate(-0.5deg); }
+#panel-gebebot .stat-row:nth-child(2) { transform: rotate(0.4deg); }
+#panel-gebebot .stat-row:nth-child(3) { transform: rotate(-0.3deg); }
+
+#panel-gebebot .stat-name {
+  font-family: var(--font-graffiti), cursive;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #fff !important;
+  line-height: 1.6;
+  overflow: visible;
+  text-shadow: 2px 2px 0 #12101a;
+}
+
+#panel-gebebot .stat-track {
+  position: relative;
+  height: 22px;
+  background: #15141a !important;
+  border: 3px solid #0a0a0e !important;
+  border-radius: 3px !important;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.9) !important;
+  overflow: hidden;
+}
+
+#panel-gebebot .stat-fill {
+  height: 100%;
+  border-radius: 0 !important;
+  transition: width 0.5s cubic-bezier(0.34, 1.3, 0.64, 1);
+  box-shadow: inset 0 3px 0 rgba(255,255,255,0.45), 0 0 14px currentColor !important;
+}
+#panel-gebebot .stat-fill.hunger    { background: linear-gradient(180deg, #ffb23d, #ff6b00); color: #ff6b00; }
+#panel-gebebot .stat-fill.happiness { background: linear-gradient(180deg, #ff7bc0, #ff2d94); color: #ff2d94; }
+#panel-gebebot .stat-fill.health    { background: linear-gradient(180deg, #b6ff4d, #9bf300); color: #9bf300; }
+
+#panel-gebebot .stat-val {
+  font-family: var(--font-graffiti), cursive;
+  font-size: 1.05rem;
+  color: var(--ink-lime) !important;
+  text-align: right;
+  line-height: 1.6;
+  overflow: visible;
+  text-shadow: 2px 2px 0 #12101a;
+}
+
+/* ── Estado de conexión: cinta de precaución pegada abajo ── */
+#panel-gebebot .connection-status {
+  margin-top: 1.9rem !important;
+  padding: 0.7rem 1rem !important;
+  text-align: center;
+  font-family: var(--font-graffiti), cursive;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1.7;
+  overflow: visible;
+  color: #12101a !important;
+  border: 3px solid #12101a !important;
+  border-radius: 3px !important;
+  transform: rotate(-1deg);
+  background: repeating-linear-gradient(45deg, #ffd400 0 14px, #1a1a1a 14px 28px) !important;
+  text-shadow: 0 0 7px rgba(255,255,255,0.95);
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.55);
+}
+#panel-gebebot .connection-status[data-state="connected"] {
+  background: repeating-linear-gradient(45deg, #9bf300 0 14px, #1a1a1a 14px 28px) !important;
+}
+#panel-gebebot .connection-status[data-state="error"],
+#panel-gebebot .connection-status[data-state="disconnected"] {
+  background: repeating-linear-gradient(45deg, #ff2d94 0 14px, #1a1a1a 14px 28px) !important;
+  color: #fff !important;
+  text-shadow: 2px 2px 0 #12101a;
+}
+
+/* ── Botón de sincronizar: chapa con LED ── */
+#btn-sync {
+  background: #1c1b22 !important;
+  border: 3px solid #12101a !important;
+  border-radius: 4px !important;
+  padding: 0.55rem !important;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.6);
+  transform: rotate(-1.5deg);
+}
+.sync-pixel {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #6b6a72;
+  box-shadow: 0 0 8px rgba(0,0,0,0.6);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.sync-pixel[data-state="ok"],
+.sync-pixel[data-state="synced"] {
+  background: var(--ink-lime);
+  box-shadow: 0 0 14px var(--ink-lime);
+}
+.sync-pixel[data-state="syncing"] {
+  background: #ffd400;
+  box-shadow: 0 0 14px #ffd400;
+  animation: syncPulse 0.7s ease-in-out infinite alternate;
+}
+.sync-pixel[data-state="error"] {
+  background: var(--ink-magenta);
+  box-shadow: 0 0 14px var(--ink-magenta);
+}
+@keyframes syncPulse {
+  from { opacity: 0.45; transform: scale(0.85); }
+  to   { opacity: 1;    transform: scale(1.15); }
+}
+
+.pixel-tag.sm {
+  font-family: var(--font-graffiti), cursive;
+  background: #12101a;
+  color: var(--ink-lime);
+  border: 2px solid #12101a;
+  border-radius: 3px;
+  padding: 0.35rem 0.55rem 0.25rem;
+  line-height: 1.6;
+  overflow: visible;
+  transform: rotate(-4deg);
+  display: inline-block;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+}
+
+@media (max-width: 480px) {
+  #panel-gebebot .stat-row { grid-template-columns: 4.8rem 1fr 2.4rem; gap: 0.5rem; }
+  #panel-gebebot .stat-name { font-size: 0.72rem; }
+  .gebebot-stats-card { padding: 3rem 1rem 1.8rem !important; }
+  .gebebot-stats-card::after { display: none; }
+}
+
+/* ╔═══════════════════════════════════════════════════════════╗
+   ║  ARRUGAS DE PAPEL · 6 VARIANTES                            ║
+   ║  Mismo principio que la que te gustó: cada pliegue es una  ║
+   ║  línea de LUZ pegada a una de SOMBRA, difuminada. Nunca    ║
+   ║  franjas grises planas.                                    ║
+   ║  Los dobleces de esquina (fold) se eliminaron.            ║
+   ╚═══════════════════════════════════════════════════════════╝ */
+
+/* Desactivar cualquier doblez de esquina que quedara */
+.sticker-fold-tl::before,
+.sticker-fold-tr::before,
+.sticker-fold-bl::before,
+.sticker-fold-br::before {
+  display: none !important;
+}
+
+.sticker-wrinkles-1,
+.sticker-wrinkles-2,
+.sticker-wrinkles-3,
+.sticker-wrinkles-4,
+.sticker-wrinkles-5,
+.sticker-wrinkles-6 {
+  background-image: none !important;
+}
+
+.sticker-wrinkles-1::before,
+.sticker-wrinkles-2::before,
+.sticker-wrinkles-3::before,
+.sticker-wrinkles-4::before,
+.sticker-wrinkles-5::before,
+.sticker-wrinkles-6::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+}
+
+/* 1 — diagonal suave (la original que te gustó) */
+.sticker-wrinkles-1::before {
+  background-image:
+    linear-gradient(102deg, transparent 27%, rgba(255,255,255,0.55) 29.4%, rgba(0,0,0,0.22) 31.2%, transparent 34%),
+    linear-gradient(78deg,  transparent 62%, rgba(255,255,255,0.38) 64.2%, rgba(0,0,0,0.16) 66%,   transparent 69%),
+    linear-gradient(168deg, transparent 44%, rgba(255,255,255,0.30) 46.5%, rgba(0,0,0,0.12) 48%,   transparent 51%);
+  filter: blur(0.6px);
+}
+
+/* 2 — cruzadas */
+.sticker-wrinkles-2::before {
+  background-image:
+    linear-gradient(65deg,  transparent 18%, rgba(255,255,255,0.50) 20.5%, rgba(0,0,0,0.20) 22.4%, transparent 25%),
+    linear-gradient(-52deg, transparent 51%, rgba(255,255,255,0.42) 53.5%, rgba(0,0,0,0.18) 55.2%, transparent 58%),
+    linear-gradient(140deg, transparent 74%, rgba(255,255,255,0.28) 76%,   rgba(0,0,0,0.11) 77.6%, transparent 80%);
+  filter: blur(0.7px);
+}
+
+/* 3 — irregulares */
+.sticker-wrinkles-3::before {
+  background-image:
+    linear-gradient(-70deg, transparent 33%, rgba(255,255,255,0.48) 35.4%, rgba(0,0,0,0.19) 37%, transparent 40%),
+    linear-gradient(112deg, transparent 57%, rgba(255,255,255,0.36) 59.4%, rgba(0,0,0,0.15) 61%, transparent 64%),
+    linear-gradient(22deg,  transparent 12%, rgba(255,255,255,0.26) 14%,   rgba(0,0,0,0.10) 15.6%, transparent 18%);
+  filter: blur(0.65px);
+}
+
+/* 4 — casi horizontales (papel doblado a la mitad) */
+.sticker-wrinkles-4::before {
+  background-image:
+    linear-gradient(6deg,   transparent 40%, rgba(255,255,255,0.52) 42.5%, rgba(0,0,0,0.22) 44.5%, transparent 47%),
+    linear-gradient(-4deg,  transparent 66%, rgba(255,255,255,0.34) 68%,   rgba(0,0,0,0.14) 69.6%, transparent 72%),
+    linear-gradient(9deg,   transparent 20%, rgba(255,255,255,0.28) 22%,   rgba(0,0,0,0.11) 23.4%, transparent 26%);
+  filter: blur(0.7px);
+}
+
+/* 5 — abanico desde una esquina */
+.sticker-wrinkles-5::before {
+  background-image:
+    linear-gradient(125deg, transparent 22%, rgba(255,255,255,0.50) 24%,   rgba(0,0,0,0.20) 25.6%, transparent 28%),
+    linear-gradient(108deg, transparent 45%, rgba(255,255,255,0.40) 47%,   rgba(0,0,0,0.16) 48.6%, transparent 51%),
+    linear-gradient(92deg,  transparent 68%, rgba(255,255,255,0.30) 70%,   rgba(0,0,0,0.12) 71.4%, transparent 74%);
+  filter: blur(0.62px);
+}
+
+/* 6 — muy arrugado (varios pliegues finos) */
+.sticker-wrinkles-6::before {
+  background-image:
+    linear-gradient(84deg,  transparent 15%, rgba(255,255,255,0.42) 16.6%, rgba(0,0,0,0.16) 17.8%, transparent 20%),
+    linear-gradient(-66deg, transparent 38%, rgba(255,255,255,0.46) 39.8%, rgba(0,0,0,0.18) 41%,   transparent 43%),
+    linear-gradient(48deg,  transparent 58%, rgba(255,255,255,0.34) 60%,   rgba(0,0,0,0.14) 61.4%, transparent 64%),
+    linear-gradient(-30deg, transparent 78%, rgba(255,255,255,0.26) 79.6%, rgba(0,0,0,0.10) 80.8%, transparent 83%);
+  filter: blur(0.55px);
+  opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STICKERS MÁS CHICOS EN MÓVIL
+   En pantallas chicas, 280px es demasiado: con 3+ stickers se
+   amontonan y traban. Los reducimos escalonadamente. physics.js
+   lee el ancho real (offsetWidth), así que las colisiones se
+   ajustan solas al nuevo tamaño.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .sticker { width: 200px !important; }
+  .sticker-title { font-size: 1.25rem !important; }
+  .sticker-subtitle { font-size: 0.7rem !important; }
+  .sticker-text { font-size: 0.95rem !important; }
+  .sticker-body { padding: 0.5rem 0.7rem !important; }
+  .sticker-header { padding: 0.4rem 0.7rem !important; }
+}
+
+@media (max-width: 420px) {
+  .sticker { width: 165px !important; }
+  .sticker-title { font-size: 1.05rem !important; }
+  .sticker-meta { font-size: 0.65rem !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ESTADO COMPLETADO DEL STICKER
+   ═══════════════════════════════════════════════════════════ */
+.sticker-completed {
+  opacity: 0.62;
+  filter: saturate(0.6);
+}
+.sticker-completed .sticker-text {
+  text-decoration: line-through;
+  text-decoration-thickness: 3px;
+}
+/* Sello "HECHO" en diagonal */
+.sticker-completed::after {
+  content: "HECHO";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  font-family: var(--font-graffiti, "Permanent Marker", cursive);
+  font-size: 2.2rem;
+  letter-spacing: 2px;
+  color: rgba(220, 30, 30, 0.85);
+  border: 4px solid rgba(220, 30, 30, 0.85);
+  border-radius: 6px;
+  padding: 0.1em 0.4em;
+  pointer-events: none;
+  z-index: 6;
+}
