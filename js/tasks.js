@@ -112,13 +112,70 @@ export function openItemModal(item = null, type = 'task') {
     document.getElementById("task-category").value = item.category || "personal";
     document.getElementById("task-recurrence").value = item.recurrence || "none";
     deleteBtn.classList.remove("hidden");
+    setupCompleteButton(item, type);   // botón "Completar"
   } else {
     document.getElementById("task-id").value = "";
     document.getElementById("task-date").value = getToday();
     if (type === 'habit') document.getElementById("task-recurrence").value = "daily";
     deleteBtn.classList.add("hidden");
+    removeCompleteButton();
   }
   modal.showModal();
+}
+
+// Inserta (o actualiza) un botón "Completar" en el modal.
+// Al completar: marca en el estado, notifica al GEBE-BOT (que premia a la
+// mascota según la carga del día) y guarda en Firebase.
+function setupCompleteButton(item, type) {
+  if (type === 'reminder') { removeCompleteButton(); return; }
+
+  const actions = document.querySelector("#form-task .modal-actions")
+               || document.querySelector("#modal-task .modal-actions");
+  if (!actions) return;
+
+  let btn = document.getElementById("btn-task-complete");
+  if (!btn) {
+    btn = document.createElement("button");
+    btn.type = "button";
+    btn.id = "btn-task-complete";
+    btn.className = "btn btn-primary";
+    actions.insertBefore(btn, actions.firstChild);
+  }
+
+  // Estado actual de completado
+  let done = false;
+  if (type === 'task') {
+    done = !!item.completed;
+  } else if (type === 'habit') {
+    const today = new Date().toISOString().slice(0, 10);
+    done = item.completedDates?.includes(today);
+  }
+
+  btn.textContent = done ? "✓ COMPLETADO" : "COMPLETAR";
+  btn.style.opacity = done ? "0.6" : "1";
+
+  btn.onclick = async () => {
+    if (type === 'task') {
+      const t = state.toggleTask(item.id);
+      if (t && t.completed) {
+        try { await api.notifyTaskComplete(); } catch (e) {}
+      }
+    } else if (type === 'habit') {
+      const h = state.toggleHabitToday(item.id);
+      const today = new Date().toISOString().slice(0, 10);
+      if (h && h.completedDates?.includes(today)) {
+        try { await api.notifyHabitComplete(); } catch (e) {}
+      }
+    }
+    onSyncRequest();   // guarda en Firebase
+    document.getElementById("modal-task").close();
+    renderStickers(type);
+  };
+}
+
+function removeCompleteButton() {
+  const btn = document.getElementById("btn-task-complete");
+  if (btn) btn.remove();
 }
 
 function playStopStickerAnimation(text, type) {
@@ -173,6 +230,16 @@ function createStickerElement(item, type) {
   if (item.wrinklePattern > 0 && item.wrinklePattern <= 6) {
     sticker.classList.add(`sticker-wrinkles-${item.wrinklePattern}`);
   }
+
+  // Marca visual de completado
+  let isDone = false;
+  if (type === 'task') {
+    isDone = !!item.completed;
+  } else if (type === 'habit') {
+    const today = new Date().toISOString().slice(0, 10);
+    isDone = item.completedDates?.includes(today);
+  }
+  if (isDone) sticker.classList.add('sticker-completed');
 
   const header = document.createElement("div");
   header.className = "sticker-header";
