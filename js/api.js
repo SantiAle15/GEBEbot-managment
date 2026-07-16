@@ -166,6 +166,33 @@ export async function saveUser(_user, tareas, habitos, recordatorios) {
   return { ok: true };
 }
 
+/**
+ * NUEVO · suscripción en TIEMPO REAL a tareas/hábitos/recordatorios.
+ * Antes, cada dispositivo solo leía los datos AL ABRIR. Si agregabas
+ * algo en el celular, la laptop (ya abierta) no se enteraba, y al
+ * guardar pisaba todo con su copia vieja → se perdían datos.
+ * Ahora ambos dispositivos escuchan y siempre tienen la última versión.
+ *
+ * Devuelve una función para desuscribirse.
+ */
+export function subscribeUserData(callback) {
+  const uid = currentUid || auth.currentUser?.uid;
+  if (!uid) return () => {};
+
+  return onValue(
+    ref(db, `users/${uid}`),
+    (snap) => {
+      const data = snap.val() || {};
+      callback({
+        tareas: data.tareas || [],
+        habitos: data.habitos || [],
+        recordatorios: data.recordatorios || [],
+      }, null);
+    },
+    (err) => callback(null, err)
+  );
+}
+
 // ═══════════════════════════════════════════════════════════
 //  ESTADO DE LA MASCOTA
 // ═══════════════════════════════════════════════════════════
