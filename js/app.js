@@ -437,6 +437,51 @@ function initDashboardActions() {
 }
 
 
+// ═══════════════════════════════════════════════════════════
+//  EXPLORADOR DE DÍA — por pestaña, junto al botón de agregar
+// ═══════════════════════════════════════════════════════════
+function initDayPicker() {
+  document.querySelectorAll(".day-explorer").forEach((exp) => {
+    const type = exp.dataset.type;
+    const label = exp.querySelector(".day-exp-label");
+    const prev = exp.querySelector(".day-exp-prev");
+    const next = exp.querySelector(".day-exp-next");
+    const allBtn = exp.querySelector(".day-exp-all");
+
+    if (type === "reminder") { exp.style.display = "none"; return; }
+
+    function todayISO() {
+      const t = new Date(); t.setHours(0,0,0,0);
+      return t.toISOString().slice(0, 10);
+    }
+    function fmt(dateStr) {
+      if (!dateStr) return "TODO";
+      const d = new Date(dateStr + "T00:00:00");
+      const today = new Date(); today.setHours(0,0,0,0);
+      const diff = Math.round((d - today) / 86400000);
+      if (diff === 0) return "HOY";
+      if (diff === 1) return "MAÑANA";
+      if (diff === -1) return "AYER";
+      return d.toLocaleDateString("es-MX", { weekday: "short", day: "numeric", month: "short" });
+    }
+    function shift(days) {
+      let cur = getViewDate(type) || todayISO();
+      const d = new Date(cur + "T00:00:00");
+      d.setDate(d.getDate() + days);
+      const iso = d.toISOString().slice(0, 10);
+      setViewDate(type, iso);
+      label.textContent = fmt(iso);
+    }
+
+    if (prev) prev.onclick = () => shift(-1);
+    if (next) next.onclick = () => shift(1);
+    if (allBtn) allBtn.onclick = () => { setViewDate(type, null); label.textContent = "TODO"; };
+    if (label) label.textContent = "TODO";
+  });
+}
+
+const INK_COLORS = ["#9bf300", "#ff2d94", "#00e5ff", "#ff6b00", "#7b2fff"];
+
 function inkSplatAt(x, y, color) {
   const c = color || INK_COLORS[Math.floor(Math.random() * INK_COLORS.length)];
 
