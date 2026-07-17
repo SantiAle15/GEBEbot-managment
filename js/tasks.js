@@ -23,6 +23,7 @@ export function initTasks() {
     const title = document.getElementById("task-title").value.trim();
     const description = document.getElementById("task-description").value.trim();
     const date = document.getElementById("task-date").value;
+    const dateEnd = document.getElementById("task-date-end")?.value || "";
     const timeStart = document.getElementById("task-time-start").value;
     const timeEnd = document.getElementById("task-time-end").value;
     const category = document.getElementById("task-category").value;
@@ -32,23 +33,24 @@ export function initTasks() {
 
     if (type === "task") {
       if (id) {
-        state.updateTask(id, { title, description, date, timeStart, timeEnd, category, recurrence });
+        state.updateTask(id, { title, description, date, dateEnd, timeStart, timeEnd, category, recurrence });
       } else {
-        state.addTask({ id: generateId(), title, description, date, timeStart, timeEnd, category, recurrence, completed: false, isNew: true, createdAt: new Date().toISOString() });
+        state.addTask({ id: generateId(), title, description, date, dateEnd, timeStart, timeEnd, category, recurrence, completed: false, isNew: true, createdAt: new Date().toISOString() });
         playStopStickerAnimation(title, 'task');
       }
     } else if (type === "habit") {
       if (id) {
-        state.updateHabit(id, { title, description, startDate: date, timeStart, timeEnd, category, recurrence });
+        state.updateHabit(id, { title, description, startDate: date, dateEnd, timeStart, timeEnd, category, recurrence });
       } else {
-        state.addHabit({ id: generateId(), title, description, startDate: date, timeStart, timeEnd, category, recurrence, completedDates: [], streak: 0, isNew: true, createdAt: new Date().toISOString() });
+        state.addHabit({ id: generateId(), title, description, startDate: date, dateEnd, timeStart, timeEnd, category, recurrence, completedDates: [], streak: 0, isNew: true, createdAt: new Date().toISOString() });
         playStopStickerAnimation(title, 'habit');
       }
     } else if (type === "reminder") {
+      // Recordatorios: SOLO título (sin fecha, hora ni descripción obligatoria)
       if (id) {
-        state.updateReminder(id, { title, description });
+        state.updateReminder(id, { title });
       } else {
-        state.addReminder({ id: generateId(), title, description, isNew: true, createdAt: new Date().toISOString() });
+        state.addReminder({ id: generateId(), title, isNew: true, createdAt: new Date().toISOString() });
         playStopStickerAnimation(title, 'reminder');
       }
     }
@@ -107,6 +109,8 @@ export function openItemModal(item = null, type = 'task') {
     document.getElementById("task-title").value = item.title;
     document.getElementById("task-description").value = item.description || "";
     document.getElementById("task-date").value = item.date || item.startDate || getToday();
+    const de = document.getElementById("task-date-end");
+    if (de) de.value = item.dateEnd || "";
     document.getElementById("task-time-start").value = item.timeStart || "";
     document.getElementById("task-time-end").value = item.timeEnd || "";
     document.getElementById("task-category").value = item.category || "personal";
@@ -120,7 +124,43 @@ export function openItemModal(item = null, type = 'task') {
     deleteBtn.classList.add("hidden");
     removeCompleteButton();
   }
+
+  // Recordatorios: SOLO título. Ocultamos todos los demás campos.
+  applyReminderFieldVisibility(type);
+
   modal.showModal();
+}
+
+// Muestra u oculta los campos según el tipo. Los recordatorios solo llevan título.
+function applyReminderFieldVisibility(type) {
+  const isReminder = (type === 'reminder');
+  const hideIds = [
+    "task-description", "task-date", "task-date-end",
+    "task-time-start", "task-time-end", "task-category", "task-recurrence",
+  ];
+  hideIds.forEach((id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    // Ocultar el contenedor lógico (label + input). Subimos hasta form-group si existe.
+    let wrapper = el.closest(".form-group") || el.parentElement;
+    // Para los que no están en form-group (description, recurrence), ocultar label asociado también
+    if (wrapper && wrapper.classList.contains("form-group")) {
+      wrapper.style.display = isReminder ? "none" : "";
+    } else {
+      el.style.display = isReminder ? "none" : "";
+      // ocultar el label inmediatamente anterior
+      const lbl = document.querySelector(`label[for="${id}"]`);
+      if (lbl) lbl.style.display = isReminder ? "none" : "";
+    }
+  });
+  // Ocultar filas vacías de recordatorio
+  document.querySelectorAll("#form-task .form-row").forEach((row) => {
+    if (!isReminder) { row.style.display = ""; return; }
+    // Si todos los form-group de la fila están ocultos, ocultar la fila
+    const groups = row.querySelectorAll(".form-group");
+    const allHidden = Array.from(groups).every(g => g.style.display === "none");
+    row.style.display = allHidden ? "none" : "";
+  });
 }
 
 // Inserta (o actualiza) un botón "Completar" en el modal.
@@ -190,36 +230,34 @@ function playStopStickerAnimation(text, type) {
   setTimeout(() => overlay.classList.remove('active'), 2500);
 }
 
-// ── Filtro de día para explorar tareas/hábitos/recordatorios ──
-// null = "hoy y sin fecha" (vista por defecto). Una fecha ISO = ese día.
-let selectedViewDate = null;
+// ── Filtro de día por pestaña ──
+// Cada pestaña recuerda su propia fecha de exploración (null = TODO).
+const viewDates = { task: null, habit: null, reminder: null };
 
-export function setViewDate(dateStr) {
-  selectedViewDate = dateStr;   // "2026-07-20" o null
-  renderStickers('task');
-  renderStickers('habit');
-  renderStickers('reminder');
+export function setViewDate(type, dateStr) {
+  viewDates[type] = dateStr;
+  renderStickers(type);
 }
-
-export function getViewDate() {
-  return selectedViewDate;
+export function getViewDate(type) {
+  return viewDates[type];
 }
 
 function itemMatchesViewDate(item, type) {
-  // Recordatorios y hábitos sin fecha siempre se muestran
-  const d = selectedViewDate;
-  if (!d) {
-    // Vista por defecto: mostramos todo (comportamiento actual)
-    return true;
+  const d = viewDates[type];
+  if (!d) return true;   // vista "TODO"
+
+  const start = item.date || item.startDate || "";
+  const end = item.dateEnd || start;   // si no hay fin, es solo ese día
+
+  if (type === 'reminder') return true;   // recordatorios no tienen fecha
+
+  if (!start) return true;   // sin fecha → siempre visible
+
+  // El día explorado cae dentro del rango [start, end]
+  if (end && end >= start) {
+    return d >= start && d <= end;
   }
-  // Filtrar por la fecha del item
-  const itemDate = item.date || item.startDate || "";
-  // Hábitos recurrentes: se muestran si empezaron en o antes del día visto
-  if (type === 'habit') {
-    if (!itemDate) return true;
-    return itemDate <= d;
-  }
-  return itemDate === d;
+  return d === start;
 }
 
 export function renderStickers(type) {
