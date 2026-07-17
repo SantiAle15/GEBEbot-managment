@@ -190,6 +190,38 @@ function playStopStickerAnimation(text, type) {
   setTimeout(() => overlay.classList.remove('active'), 2500);
 }
 
+// ── Filtro de día para explorar tareas/hábitos/recordatorios ──
+// null = "hoy y sin fecha" (vista por defecto). Una fecha ISO = ese día.
+let selectedViewDate = null;
+
+export function setViewDate(dateStr) {
+  selectedViewDate = dateStr;   // "2026-07-20" o null
+  renderStickers('task');
+  renderStickers('habit');
+  renderStickers('reminder');
+}
+
+export function getViewDate() {
+  return selectedViewDate;
+}
+
+function itemMatchesViewDate(item, type) {
+  // Recordatorios y hábitos sin fecha siempre se muestran
+  const d = selectedViewDate;
+  if (!d) {
+    // Vista por defecto: mostramos todo (comportamiento actual)
+    return true;
+  }
+  // Filtrar por la fecha del item
+  const itemDate = item.date || item.startDate || "";
+  // Hábitos recurrentes: se muestran si empezaron en o antes del día visto
+  if (type === 'habit') {
+    if (!itemDate) return true;
+    return itemDate <= d;
+  }
+  return itemDate === d;
+}
+
 export function renderStickers(type) {
   const containerId = type === 'task' ? 'sticker-container-tasks' :
                       type === 'habit' ? 'sticker-container-habits' :
@@ -203,6 +235,9 @@ export function renderStickers(type) {
   else if (type === 'habit') items = state.getHabits();
   else if (type === 'reminder') items = state.getReminders();
 
+  // Filtrar por el día seleccionado
+  items = items.filter((item) => itemMatchesViewDate(item, type));
+
   const entries = [];
   items.forEach((item) => {
     const sticker = createStickerElement(item, type);
@@ -210,8 +245,6 @@ export function renderStickers(type) {
     entries.push({ el: sticker, item, type });
   });
 
-  // El DOM ya está montado: ahora sí podemos medir cada sticker y
-  // crear su cuerpo físico con el tamaño real.
   requestAnimationFrame(() => {
     physics.syncBoard(containerId, container, entries);
   });
