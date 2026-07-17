@@ -4193,3 +4193,70 @@ html, body {
   #day-label { font-size: 0.85rem; min-width: 74px; }
   #day-picker-bar .day-nav { width: 26px; height: 26px; font-size: 1.1rem; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   EXPLORADOR DE DÍA — estilo grafiti urbano, junto a +Agregar
+   ═══════════════════════════════════════════════════════════ */
+.day-explorer {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-1.5deg);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #12101a;
+  border: 3px solid #12101a;
+  border-radius: 5px;
+  padding: 4px 6px;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.4), 0 0 0 2px #9bf300;
+}
+.day-explorer .day-exp-btn {
+  background: #9bf300;
+  color: #12101a;
+  border: 2px solid #12101a;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.08s ease, background 0.15s ease;
+}
+.day-explorer .day-exp-btn:hover { background: #fff; }
+.day-explorer .day-exp-btn:active { transform: scale(0.88); }
+.day-explorer .day-exp-label {
+  font-family: var(--font-graffiti, "Permanent Marker", cursive);
+  font-size: 0.95rem;
+  min-width: 88px;
+  text-align: center;
+  color: #9bf300;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 1px 1px 0 #000;
+}
+.day-explorer .day-exp-all {
+  background: #ff2d94;
+  color: #fff;
+  border: 2px solid #12101a;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: var(--font-graffiti, "Permanent Marker", cursive);
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.day-explorer .day-exp-all:hover { background: #ff5cad; }
+
+@media (max-width: 600px) {
+  .day-explorer { top: 12px; padding: 3px 5px; gap: 3px; }
+  .day-explorer .day-exp-label { font-size: 0.8rem; min-width: 70px; }
+  .day-explorer .day-exp-btn { width: 26px; height: 26px; font-size: 1.1rem; }
+  .day-explorer .day-exp-all { font-size: 0.62rem; padding: 3px 6px; }
+}
