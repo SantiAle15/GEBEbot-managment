@@ -67,6 +67,12 @@
         <button id="btn-add-task" class="btn-add btn-add-task" title="Agregar tarea">
           <img src="images/btn-add-task.png" alt="Agregar tarea">
         </button>
+        <div class="day-explorer" data-type="task">
+          <button class="day-exp-btn day-exp-prev" title="Dia anterior">&lsaquo;</button>
+          <span class="day-exp-label">TODO</span>
+          <button class="day-exp-btn day-exp-next" title="Dia siguiente">&rsaquo;</button>
+          <button class="day-exp-all" title="Ver todo">TODO</button>
+        </div>
         <div id="sticker-container-tasks" class="sticker-container"></div>
       </div>
 
@@ -75,6 +81,12 @@
         <button id="btn-add-habit" class="btn-add btn-add-habit" title="Agregar hábito">
           <img src="images/btn-add-habit.png" alt="Agregar hábito">
         </button>
+        <div class="day-explorer" data-type="habit">
+          <button class="day-exp-btn day-exp-prev" title="Dia anterior">&lsaquo;</button>
+          <span class="day-exp-label">TODO</span>
+          <button class="day-exp-btn day-exp-next" title="Dia siguiente">&rsaquo;</button>
+          <button class="day-exp-all" title="Ver todo">TODO</button>
+        </div>
         <div id="sticker-container-habits" class="sticker-container"></div>
       </div>
 
@@ -83,6 +95,12 @@
         <button id="btn-add-reminder" class="btn-add btn-add-reminder" title="Añadir recordatorio">
           <img src="images/btn-add-reminder.png" alt="Añadir recordatorio">
         </button>
+        <div class="day-explorer" data-type="reminder">
+          <button class="day-exp-btn day-exp-prev" title="Dia anterior">&lsaquo;</button>
+          <span class="day-exp-label">TODO</span>
+          <button class="day-exp-btn day-exp-next" title="Dia siguiente">&rsaquo;</button>
+          <button class="day-exp-all" title="Ver todo">TODO</button>
+        </div>
         <div id="sticker-container-reminders" class="sticker-container"></div>
       </div>
 
@@ -193,6 +211,13 @@
           <label for="task-time-end">Hora fin (opcional)</label>
           <input type="time" id="task-time-end">
         </div>
+        <div class="form-group">
+          <label for="task-date-end">Hasta el día (opcional)</label>
+          <input type="date" id="task-date-end">
+        </div>
+      </div>
+
+      <div class="form-row">
         <div class="form-group">
           <label for="task-category">Categoría</label>
           <select id="task-category">
