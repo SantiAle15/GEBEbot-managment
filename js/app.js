@@ -2,7 +2,7 @@ import { POLL_INTERVAL_MS } from "./config.js";
 import * as auth from "./auth.js";
 import * as api from "./api.js";
 import * as state from "./state.js";
-import { initTasks, setSyncHandler, renderStickers } from "./tasks.js";
+import { initTasks, setSyncHandler, renderStickers, setViewDate, getViewDate } from "./tasks.js";
 import * as physics from "./physics.js";
 import { initCalendar } from "./calendar.js";
 
@@ -437,12 +437,6 @@ function initDashboardActions() {
 }
 
 
-// ═══════════════════════════════════════════════════════════
-//  MANCHAS DE TINTA AL INTERACTUAR
-//  Salpica al hacer click en botones, tabs, celdas del calendario.
-// ═══════════════════════════════════════════════════════════
-const INK_COLORS = ["#9bf300", "#ff2d94", "#00e5ff", "#ff6b00", "#7b2fff"];
-
 function inkSplatAt(x, y, color) {
   const c = color || INK_COLORS[Math.floor(Math.random() * INK_COLORS.length)];
 
@@ -511,6 +505,7 @@ function bootstrap() {
   setSyncHandler(syncToDevice);
   physics.setSyncCallback(syncToDevice);
   initInkSplats();
+  initDayPicker();
 
   const session = auth.restoreSession();
   if (session) {
