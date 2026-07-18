@@ -4199,9 +4199,10 @@ html, body {
    ═══════════════════════════════════════════════════════════ */
 .day-explorer {
   position: absolute;
-  top: 18px;
-  left: 50%;
-  transform: translateX(-50%) rotate(-1.5deg);
+  bottom: 20px;
+  left: 20px;
+  top: auto;
+  transform: rotate(-1.5deg);
   z-index: 40;
   display: flex;
   align-items: center;
@@ -4255,8 +4256,262 @@ html, body {
 .day-explorer .day-exp-all:hover { background: #ff5cad; }
 
 @media (max-width: 600px) {
-  .day-explorer { top: 12px; padding: 3px 5px; gap: 3px; }
+  .day-explorer { bottom: 12px; left: 12px; top: auto; padding: 3px 5px; gap: 3px; }
   .day-explorer .day-exp-label { font-size: 0.8rem; min-width: 70px; }
   .day-explorer .day-exp-btn { width: 26px; height: 26px; font-size: 1.1rem; }
   .day-explorer .day-exp-all { font-size: 0.62rem; padding: 3px 6px; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   COLLAGE — Tablero libre tipo Canva
+   ═══════════════════════════════════════════════════════════ */
+.collage-board {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0 !important;
+}
+
+/* Barra de herramientas flotante arriba */
+.collage-toolbar {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #12101a;
+  border: 3px solid #12101a;
+  border-radius: 8px;
+  padding: 6px 8px;
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.35), 0 0 0 2px #9bf300;
+  flex-wrap: wrap;
+  max-width: 94vw;
+}
+.collage-tool {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f4f1e8;
+  color: #12101a;
+  border: 2px solid #12101a;
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.08s ease, background 0.15s ease;
+}
+.collage-tool span {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.collage-tool:hover { background: #9bf300; }
+.collage-tool:active { transform: scale(0.92); }
+.collage-tool-sep { width: 2px; height: 26px; background: #9bf300; margin: 0 2px; }
+.collage-zoom-label {
+  font-family: var(--font-graffiti, "Permanent Marker", cursive);
+  min-width: 54px;
+  justify-content: center;
+}
+
+/* Viewport (área visible) */
+.collage-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  cursor: grab;
+  background-color: #f7fbff;
+  touch-action: none;
+}
+
+/* Canvas infinito (se mueve con translate+scale) */
+.collage-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8000px;
+  height: 8000px;
+  transform-origin: 0 0;
+  /* Fondo de cuadrícula repetido */
+  background-image: url("images/bg-notebook.png");
+  background-repeat: repeat;
+  background-size: 480px auto;
+  margin-left: -4000px;
+  margin-top: -4000px;
+}
+
+/* Elemento genérico del collage */
+.collage-el {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow 0.15s ease;
+}
+.collage-el:active { cursor: grabbing; }
+.collage-el:hover { box-shadow: 0 6px 22px rgba(0,0,0,0.28); }
+
+.collage-el-del {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ff2d94;
+  color: #fff;
+  border: 2px solid #fff;
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: none;
+  z-index: 3;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+.collage-el:hover .collage-el-del { display: block; }
+
+/* NOTA (post-it) */
+.collage-el-note {
+  padding: 14px;
+  border-radius: 3px;
+  box-shadow: 3px 4px 12px rgba(0,0,0,0.22);
+  display: flex;
+}
+.collage-note-text {
+  width: 100%;
+  height: 100%;
+  outline: none;
+  font-family: "Permanent Marker", var(--font-graffiti), cursive;
+  font-size: 1.15rem;
+  color: #33312b;
+  line-height: 1.35;
+  overflow: auto;
+  cursor: text;
+}
+.collage-note-text:empty::before {
+  content: "Escribe...";
+  color: rgba(0,0,0,0.3);
+}
+
+/* IMAGEN */
+.collage-el-image {
+  border-radius: 4px;
+  overflow: visible;
+}
+.collage-el-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
+  border: 6px solid #fff;
+  box-shadow: 3px 5px 14px rgba(0,0,0,0.28);
+  pointer-events: none;
+}
+
+/* ARCHIVO (recorte) */
+.collage-el-file {
+  background: #fff;
+  border: 2px solid #12101a;
+  border-radius: 6px;
+  padding: 8px;
+  box-shadow: 3px 4px 12px rgba(0,0,0,0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.collage-file-cut {
+  flex: 1;
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.collage-file-cut img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.collage-file-icon { font-size: 3rem; }
+.collage-file-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  color: #12101a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* PENDIENTE (tarea/hábito/recordatorio) */
+.collage-el-item {
+  background: #fff;
+  border: 3px solid var(--item-accent, #9bf300);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 3px 4px 12px rgba(0,0,0,0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.collage-item-badge {
+  align-self: flex-start;
+  background: var(--item-accent, #9bf300);
+  color: #12101a;
+  font-family: var(--font-graffiti, "Permanent Marker", cursive);
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+}
+.collage-item-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #12101a;
+  line-height: 1.25;
+}
+
+/* Modal picker de pendientes */
+.collage-picker-tabs {
+  display: flex;
+  gap: 6px;
+  margin: 14px 0;
+}
+.cp-tab {
+  flex: 1;
+  padding: 8px;
+  border: 2px solid #12101a;
+  background: #f4f1e8;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.cp-tab.active { background: #9bf300; }
+.collage-picker-list {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.collage-picker-row {
+  text-align: left;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-left: 5px solid #9bf300;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.12s ease;
+}
+.collage-picker-row:hover { background: #f0f0f0; }
+.collage-picker-empty { text-align: center; color: #999; padding: 30px; }
+
+/* Móvil */
+@media (max-width: 600px) {
+  .collage-toolbar { top: 8px; gap: 4px; padding: 4px 6px; }
+  .collage-tool { padding: 5px 7px; font-size: 1rem; }
+  .collage-tool span { display: none; }
 }
