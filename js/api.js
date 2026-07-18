@@ -166,6 +166,22 @@ export async function saveUser(_user, tareas, habitos, recordatorios) {
   return { ok: true };
 }
 
+/** Guarda el collage por separado (puede ser grande por las imágenes) */
+export async function saveCollage(collageData) {
+  const uid = requireUid();
+  await update(ref(db, `users/${uid}`), {
+    collage: collageData || { elements: [], view: { x: 0, y: 0, scale: 1 } },
+  });
+  return { ok: true };
+}
+
+/** Lee el collage guardado */
+export async function fetchCollage() {
+  const uid = requireUid();
+  const snap = await get(ref(db, `users/${uid}/collage`));
+  return snap.val() || null;
+}
+
 /**
  * NUEVO · suscripción en TIEMPO REAL a tareas/hábitos/recordatorios.
  * Antes, cada dispositivo solo leía los datos AL ABRIR. Si agregabas
