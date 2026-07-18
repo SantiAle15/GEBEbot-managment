@@ -56,6 +56,7 @@
         <button type="button" class="tab-dot active" data-tab="tasks" role="tab" aria-selected="true" aria-label="Tareas"></button>
         <button type="button" class="tab-dot" data-tab="habits" role="tab" aria-selected="false" aria-label="Hábitos"></button>
         <button type="button" class="tab-dot" data-tab="reminders" role="tab" aria-selected="false" aria-label="Recordatorios"></button>
+        <button type="button" class="tab-dot" data-tab="collage" role="tab" aria-selected="false" aria-label="Collage"></button>
         <button type="button" class="tab-dot" data-tab="calendar" role="tab" aria-selected="false" aria-label="Calendario"></button>
         <button type="button" class="tab-dot" data-tab="gebebot" role="tab" aria-selected="false" aria-label="Gebe-bot"></button>
       </div>
@@ -102,6 +103,29 @@
           <button class="day-exp-all" title="Ver todo">TODO</button>
         </div>
         <div id="sticker-container-reminders" class="sticker-container"></div>
+      </div>
+
+      <!-- ═══ PANEL: COLLAGE (Tablero libre tipo Canva) ═══ -->
+      <div id="panel-collage" class="tab-panel collage-board" role="tabpanel">
+        <!-- Barra de herramientas -->
+        <div class="collage-toolbar">
+          <button class="collage-tool" data-add="image" title="Agregar imagen">🖼️<span>Imagen</span></button>
+          <button class="collage-tool" data-add="note" title="Agregar nota">📝<span>Nota</span></button>
+          <button class="collage-tool" data-add="file" title="Agregar archivo">📎<span>Archivo</span></button>
+          <button class="collage-tool" data-add="item" title="Agregar tarea/hábito/recordatorio">✅<span>Pendiente</span></button>
+          <div class="collage-tool-sep"></div>
+          <button class="collage-tool" data-add="zoomout" title="Alejar">➖</button>
+          <button class="collage-tool collage-zoom-label" data-add="zoomreset" title="Restablecer zoom">100%</button>
+          <button class="collage-tool" data-add="zoomin" title="Acercar">➕</button>
+        </div>
+
+        <!-- Viewport con pan/zoom infinito -->
+        <div id="collage-viewport" class="collage-viewport">
+          <div id="collage-canvas" class="collage-canvas"></div>
+        </div>
+
+        <!-- Input oculto para subir imágenes/archivos -->
+        <input type="file" id="collage-file-input" accept="image/*" style="display:none">
       </div>
 
       <!-- ═══ PANEL: CALENDARIO ═══ -->
@@ -244,6 +268,20 @@
         <button type="submit" class="btn btn-primary">Guardar</button>
       </div>
     </form>
+  </dialog>
+
+  <!-- ═══ MODAL: elegir pendiente para el collage ═══ -->
+  <dialog id="modal-collage-picker" class="modal">
+    <div class="modal-header-tag task"><h2 class="tag-title">AGREGAR</h2><div class="tag-subtitle">Elige un pendiente...</div></div>
+    <div class="collage-picker-tabs">
+      <button class="cp-tab active" data-cptype="task">Tareas</button>
+      <button class="cp-tab" data-cptype="habit">Hábitos</button>
+      <button class="cp-tab" data-cptype="reminder">Recordatorios</button>
+    </div>
+    <div id="collage-picker-list" class="collage-picker-list"></div>
+    <div class="modal-actions">
+      <button type="button" id="collage-picker-cancel" class="btn-ghost">Cerrar</button>
+    </div>
   </dialog>
 
   <!-- ═══ ANIMACIÓN STICKER EN SEÑAL DE STOP ═══ -->
