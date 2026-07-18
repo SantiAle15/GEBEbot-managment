@@ -3,7 +3,7 @@ import * as auth from "./auth.js";
 import * as api from "./api.js";
 import * as state from "./state.js";
 import { initTasks, setSyncHandler, renderStickers, setViewDate, getViewDate } from "./tasks.js";
-import { initCollage, loadCollage, getCollageData, setCollageSyncHandler } from "./collage.js";
+import { initCollage, loadCollage, getCollageData, setCollageSyncHandler, refreshCollage } from "./collage.js";
 import * as physics from "./physics.js";
 import { initCalendar } from "./calendar.js";
 
@@ -331,6 +331,9 @@ function switchTab(target, directionHint) {
     // Solo simula el tablero visible (ahorra CPU)
     const cid = STICKER_CONTAINERS[target];
     if (cid) physics.activateBoard(cid);
+
+    // Al entrar al collage, refrescar su vista (el canvas ya es visible)
+    if (target === "collage") refreshCollage();
 
     jiggleStickers(target, 0.55);
   };
