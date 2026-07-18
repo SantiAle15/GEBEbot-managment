@@ -3,6 +3,7 @@ import * as auth from "./auth.js";
 import * as api from "./api.js";
 import * as state from "./state.js";
 import { initTasks, setSyncHandler, renderStickers, setViewDate, getViewDate } from "./tasks.js";
+import { initCollage, loadCollage, getCollageData, setCollageSyncHandler } from "./collage.js";
 import * as physics from "./physics.js";
 import { initCalendar } from "./calendar.js";
 
@@ -123,11 +124,29 @@ async function syncToDevice() {
   }
 }
 
+// Guarda solo el collage (por separado, puede ser grande)
+let collageSaveTimer = null;
+async function syncCollage() {
+  const user = state.getUsername();
+  if (!user) return;
+  markLocalSave();
+  try {
+    await api.saveCollage(getCollageData());
+  } catch (err) {
+    if (err.status === 401) forceLogout("Sesión expirada. Vuelve a entrar.");
+  }
+}
+
 async function loadUserData(user) {
   setConnectionState("connecting", "Cargando tu cuenta…");
   try {
     const data = await api.fetchUser(user);
     state.loadFromServer(data);
+    // Cargar el collage (si existe)
+    try {
+      const collageData = await api.fetchCollage();
+      if (collageData) loadCollage(collageData);
+    } catch (e) { /* sin collage aún */ }
     setConnectionState("online", "Cuenta sincronizada");
   } catch (err) {
     if (err.status === 401) {
@@ -213,7 +232,7 @@ function stopPolling() {
   if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
 }
 
-const TAB_ORDER = ["tasks", "habits", "reminders", "calendar", "gebebot"];
+const TAB_ORDER = ["tasks", "habits", "reminders", "collage", "calendar", "gebebot"];
 
 const TAB_COLORS = {
   tasks: "#4CAF50",
@@ -551,6 +570,8 @@ function bootstrap() {
   physics.setSyncCallback(syncToDevice);
   initInkSplats();
   initDayPicker();
+  initCollage();
+  setCollageSyncHandler(syncCollage);
 
   const session = auth.restoreSession();
   if (session) {
