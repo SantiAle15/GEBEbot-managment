@@ -104,6 +104,7 @@ function normalizeReminder(r) {
     id: r.id || crypto.randomUUID(),
     title: String(r.title || "").trim(),
     description: String(r.description || ""),
+    completed: Boolean(r.completed),
     expiryDate: r.expiryDate || "",
     isNew: Boolean(r.isNew),
     createdAt: r.createdAt || todayISO(),
@@ -166,17 +167,17 @@ export function toggleTask(id) {
   return t;
 }
 
-export function toggleHabitToday(id) {
+export function toggleHabitToday(id, day) {
   const h = habits.find((x) => x.id === id);
   if (!h) return null;
-  const today = todayISO();
-  const wasDone = h.completedDates?.includes(today);
+  const target = day || todayISO();
+  const wasDone = h.completedDates?.includes(target);
   if (!wasDone) {
     if (!h.completedDates) h.completedDates = [];
-    h.completedDates.push(today);
-    h.streak += 1;
+    h.completedDates.push(target);
+    h.streak = (h.streak || 0) + 1;
   } else {
-    h.completedDates = h.completedDates.filter(d => d !== today);
+    h.completedDates = h.completedDates.filter(d => d !== target);
     if (h.streak > 0) h.streak -= 1;
   }
   emit();
