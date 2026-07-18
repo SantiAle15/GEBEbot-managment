@@ -167,8 +167,6 @@ function applyReminderFieldVisibility(type) {
 // Al completar: marca en el estado, notifica al GEBE-BOT (que premia a la
 // mascota según la carga del día) y guarda en Firebase.
 function setupCompleteButton(item, type) {
-  if (type === 'reminder') { removeCompleteButton(); return; }
-
   const actions = document.querySelector("#form-task .modal-actions")
                || document.querySelector("#modal-task .modal-actions");
   if (!actions) return;
@@ -182,13 +180,17 @@ function setupCompleteButton(item, type) {
     actions.insertBefore(btn, actions.firstChild);
   }
 
+  // El día que se está completando: el explorado, o hoy si es "TODO"
+  const viewDay = getViewDate(type) || new Date().toISOString().slice(0, 10);
+
   // Estado actual de completado
   let done = false;
   if (type === 'task') {
     done = !!item.completed;
   } else if (type === 'habit') {
-    const today = new Date().toISOString().slice(0, 10);
-    done = item.completedDates?.includes(today);
+    done = item.completedDates?.includes(viewDay);
+  } else if (type === 'reminder') {
+    done = !!item.completed;
   }
 
   btn.textContent = done ? "✓ COMPLETADO" : "COMPLETAR";
@@ -201,11 +203,12 @@ function setupCompleteButton(item, type) {
         try { await api.notifyTaskComplete(); } catch (e) {}
       }
     } else if (type === 'habit') {
-      const h = state.toggleHabitToday(item.id);
-      const today = new Date().toISOString().slice(0, 10);
-      if (h && h.completedDates?.includes(today)) {
+      const h = state.toggleHabitToday(item.id, viewDay);
+      if (h && h.completedDates?.includes(viewDay)) {
         try { await api.notifyHabitComplete(); } catch (e) {}
       }
+    } else if (type === 'reminder') {
+      state.updateReminder(item.id, { completed: !item.completed });
     }
     onSyncRequest();   // guarda en Firebase
     document.getElementById("modal-task").close();
@@ -246,14 +249,33 @@ function itemMatchesViewDate(item, type) {
   const d = viewDates[type];
   if (!d) return true;   // vista "TODO"
 
-  const start = item.date || item.startDate || "";
-  const end = item.dateEnd || start;   // si no hay fin, es solo ese día
-
   if (type === 'reminder') return true;   // recordatorios no tienen fecha
 
+  const start = item.date || item.startDate || "";
   if (!start) return true;   // sin fecha → siempre visible
 
-  // El día explorado cae dentro del rango [start, end]
+  // ── HÁBITOS: respetan su recurrencia ──
+  if (type === 'habit') {
+    const rec = item.recurrence || "daily";
+    // El día explorado debe ser >= fecha de inicio
+    if (d < start) return false;
+    // Si tiene fecha de fin y ya pasó, no aparece
+    if (item.dateEnd && d > item.dateEnd) return false;
+
+    if (rec === "none") return d === start;   // hábito de un solo día
+    if (rec === "daily") return true;          // todos los días desde el inicio
+
+    const ds = new Date(start + "T00:00:00");
+    const dv = new Date(d + "T00:00:00");
+    const diffDays = Math.round((dv - ds) / 86400000);
+
+    if (rec === "weekly") return diffDays % 7 === 0;
+    if (rec === "monthly") return ds.getDate() === dv.getDate();
+    return true;
+  }
+
+  // ── TAREAS: rango [start, dateEnd] ──
+  const end = item.dateEnd || start;
   if (end && end >= start) {
     return d >= start && d <= end;
   }
@@ -307,10 +329,17 @@ function createStickerElement(item, type) {
   if (type === 'task') {
     isDone = !!item.completed;
   } else if (type === 'habit') {
-    const today = new Date().toISOString().slice(0, 10);
-    isDone = item.completedDates?.includes(today);
+    const viewDay = getViewDate('habit') || new Date().toISOString().slice(0, 10);
+    isDone = item.completedDates?.includes(viewDay);
+  } else if (type === 'reminder') {
+    isDone = !!item.completed;
   }
   if (isDone) sticker.classList.add('sticker-completed');
+  // Color aleatorio de las manchas de completado (varía por sticker)
+  if (isDone) {
+    const palette = ["lime", "magenta", "cyan", "orange", "purple"];
+    sticker.classList.add(`splat-${palette[Math.floor(Math.random() * palette.length)]}`);
+  }
 
   const header = document.createElement("div");
   header.className = "sticker-header";
