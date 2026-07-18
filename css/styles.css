@@ -4266,59 +4266,16 @@ html, body {
    COLLAGE — Tablero libre tipo Canva
    ═══════════════════════════════════════════════════════════ */
 .collage-board {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
   padding: 0 !important;
+  display: block !important;
 }
 
-/* Barra de herramientas flotante arriba */
-.collage-toolbar {
-  position: absolute;
-  top: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 60;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #12101a;
-  border: 3px solid #12101a;
-  border-radius: 8px;
-  padding: 6px 8px;
-  box-shadow: 5px 5px 0 rgba(0,0,0,0.35), 0 0 0 2px #9bf300;
-  flex-wrap: wrap;
-  max-width: 94vw;
-}
-.collage-tool {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: #f4f1e8;
-  color: #12101a;
-  border: 2px solid #12101a;
-  border-radius: 5px;
-  padding: 6px 10px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  font-family: inherit;
-  transition: transform 0.08s ease, background 0.15s ease;
-}
-.collage-tool span {
-  font-size: 0.8rem;
-  font-weight: 700;
-}
-.collage-tool:hover { background: #9bf300; }
-.collage-tool:active { transform: scale(0.92); }
-.collage-tool-sep { width: 2px; height: 26px; background: #9bf300; margin: 0 2px; }
-.collage-zoom-label {
-  font-family: var(--font-graffiti, "Permanent Marker", cursive);
-  min-width: 54px;
-  justify-content: center;
-}
-
-/* Viewport (área visible) */
+/* Viewport (área visible) — ocupa todo el panel */
 .collage-viewport {
   position: absolute;
   inset: 0;
@@ -4336,12 +4293,52 @@ html, body {
   width: 8000px;
   height: 8000px;
   transform-origin: 0 0;
-  /* Fondo de cuadrícula repetido */
-  background-image: url("images/bg-notebook.png");
+  background-image: url("../images/bg-notebook.png");
   background-repeat: repeat;
   background-size: 480px auto;
-  margin-left: -4000px;
-  margin-top: -4000px;
+}
+
+/* Barra de herramientas — ABAJO al centro */
+.collage-toolbar {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #12101a;
+  border: 3px solid #12101a;
+  border-radius: 8px;
+  padding: 6px 8px;
+  box-shadow: 5px 5px 0 rgba(0,0,0,0.35), 0 0 0 2px #9bf300;
+  flex-wrap: wrap;
+  max-width: 94vw;
+  justify-content: center;
+}
+.collage-tool {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f4f1e8;
+  color: #12101a;
+  border: 2px solid #12101a;
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.08s ease, background 0.15s ease;
+}
+.collage-tool span { font-size: 0.8rem; font-weight: 700; }
+.collage-tool:hover { background: #9bf300; }
+.collage-tool:active { transform: scale(0.92); }
+.collage-tool-sep { width: 2px; height: 26px; background: #9bf300; margin: 0 2px; }
+.collage-zoom-label {
+  font-family: var(--font-graffiti, "Permanent Marker", cursive);
+  min-width: 54px;
+  justify-content: center;
 }
 
 /* Elemento genérico del collage */
@@ -4391,16 +4388,10 @@ html, body {
   overflow: auto;
   cursor: text;
 }
-.collage-note-text:empty::before {
-  content: "Escribe...";
-  color: rgba(0,0,0,0.3);
-}
+.collage-note-text:empty::before { content: "Escribe..."; color: rgba(0,0,0,0.3); }
 
 /* IMAGEN */
-.collage-el-image {
-  border-radius: 4px;
-  overflow: visible;
-}
+.collage-el-image { border-radius: 4px; }
 .collage-el-image img {
   width: 100%;
   height: auto;
@@ -4464,19 +4455,10 @@ html, body {
   border-radius: 4px;
   letter-spacing: 1px;
 }
-.collage-item-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #12101a;
-  line-height: 1.25;
-}
+.collage-item-title { font-size: 1.05rem; font-weight: 700; color: #12101a; line-height: 1.25; }
 
 /* Modal picker de pendientes */
-.collage-picker-tabs {
-  display: flex;
-  gap: 6px;
-  margin: 14px 0;
-}
+.collage-picker-tabs { display: flex; gap: 6px; margin: 14px 0; }
 .cp-tab {
   flex: 1;
   padding: 8px;
@@ -4488,13 +4470,7 @@ html, body {
   font-size: 0.85rem;
 }
 .cp-tab.active { background: #9bf300; }
-.collage-picker-list {
-  max-height: 300px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+.collage-picker-list { max-height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
 .collage-picker-row {
   text-align: left;
   padding: 10px 12px;
@@ -4511,7 +4487,47 @@ html, body {
 
 /* Móvil */
 @media (max-width: 600px) {
-  .collage-toolbar { top: 8px; gap: 4px; padding: 4px 6px; }
+  .collage-toolbar { bottom: 10px; gap: 4px; padding: 4px 6px; }
   .collage-tool { padding: 5px 7px; font-size: 1rem; }
   .collage-tool span { display: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   VARIANTES DE COLOR para las manchas de completado (random)
+   ═══════════════════════════════════════════════════════════ */
+.sticker-completed.splat-lime::before {
+  background-image:
+    radial-gradient(ellipse 60px 42px at 22% 30%, rgba(155,243,0,0.55) 0%, rgba(155,243,0,0.4) 55%, transparent 70%),
+    radial-gradient(ellipse 50px 60px at 78% 65%, rgba(123,47,255,0.45) 0%, transparent 72%),
+    radial-gradient(ellipse 40px 38px at 55% 20%, rgba(0,229,255,0.4) 0%, transparent 68%);
+}
+.sticker-completed.splat-magenta::before {
+  background-image:
+    radial-gradient(ellipse 60px 42px at 25% 32%, rgba(255,45,148,0.55) 0%, rgba(255,45,148,0.4) 55%, transparent 70%),
+    radial-gradient(ellipse 50px 60px at 76% 62%, rgba(255,107,0,0.45) 0%, transparent 72%),
+    radial-gradient(ellipse 40px 38px at 52% 22%, rgba(155,243,0,0.4) 0%, transparent 68%);
+}
+.sticker-completed.splat-cyan::before {
+  background-image:
+    radial-gradient(ellipse 60px 42px at 20% 28%, rgba(0,229,255,0.55) 0%, rgba(0,229,255,0.4) 55%, transparent 70%),
+    radial-gradient(ellipse 50px 60px at 80% 66%, rgba(155,243,0,0.45) 0%, transparent 72%),
+    radial-gradient(ellipse 40px 38px at 55% 20%, rgba(255,45,148,0.4) 0%, transparent 68%);
+}
+.sticker-completed.splat-orange::before {
+  background-image:
+    radial-gradient(ellipse 60px 42px at 24% 30%, rgba(255,107,0,0.55) 0%, rgba(255,107,0,0.4) 55%, transparent 70%),
+    radial-gradient(ellipse 50px 60px at 78% 64%, rgba(255,45,148,0.45) 0%, transparent 72%),
+    radial-gradient(ellipse 40px 38px at 54% 22%, rgba(255,209,0,0.45) 0%, transparent 68%);
+}
+.sticker-completed.splat-purple::before {
+  background-image:
+    radial-gradient(ellipse 60px 42px at 22% 32%, rgba(123,47,255,0.5) 0%, rgba(123,47,255,0.38) 55%, transparent 70%),
+    radial-gradient(ellipse 50px 60px at 78% 63%, rgba(0,229,255,0.45) 0%, transparent 72%),
+    radial-gradient(ellipse 40px 38px at 55% 20%, rgba(255,45,148,0.4) 0%, transparent 68%);
+}
+/* El rayón diagonal también varía de color */
+.sticker-completed.splat-lime::after    { background: rgba(123,47,255,0.82); box-shadow: 0 18px 0 -3px rgba(123,47,255,0.35); }
+.sticker-completed.splat-magenta::after { background: rgba(255,45,148,0.82); box-shadow: 0 18px 0 -3px rgba(255,45,148,0.35); }
+.sticker-completed.splat-cyan::after    { background: rgba(0,180,220,0.82);  box-shadow: 0 18px 0 -3px rgba(0,180,220,0.35); }
+.sticker-completed.splat-orange::after  { background: rgba(255,107,0,0.85);  box-shadow: 0 18px 0 -3px rgba(255,107,0,0.35); }
+.sticker-completed.splat-purple::after  { background: rgba(123,47,255,0.82); box-shadow: 0 18px 0 -3px rgba(123,47,255,0.35); }
