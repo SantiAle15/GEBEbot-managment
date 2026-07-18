@@ -68,6 +68,17 @@ export function getCollageData() {
   return { elements, view };
 }
 
+// Se llama al activar la pestaña: re-aplica la vista y redibuja
+// (el canvas ya es visible y tiene medidas correctas)
+export function refreshCollage() {
+  if (!canvas) {
+    // Por si initCollage no encontró los nodos al inicio, reintentar
+    initCollage();
+  }
+  renderAll();
+  applyTransform();
+}
+
 function persist() {
   onSyncRequest();
 }
