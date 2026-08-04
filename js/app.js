@@ -6,6 +6,7 @@ import { initTasks, setSyncHandler, renderStickers, setViewDate, getViewDate } f
 import { initCollage, loadCollage, getCollageData, setCollageSyncHandler, refreshCollage } from "./collage.js";
 import * as physics from "./physics.js";
 import { initCalendar } from "./calendar.js";
+import { initSchedule, loadSchedule, getScheduleData, setScheduleSyncHandler } from "./schedule.js";
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -137,6 +138,17 @@ async function syncCollage() {
   }
 }
 
+// Guarda solo el horario escolar
+async function syncSchedule() {
+  if (!state.getUsername()) return;
+  markLocalSave();
+  try {
+    await api.saveSchedule(getScheduleData());
+  } catch (err) {
+    if (err.status === 401) forceLogout("Sesión expirada. Vuelve a entrar.");
+  }
+}
+
 async function loadUserData(user) {
   setConnectionState("connecting", "Cargando tu cuenta…");
   try {
@@ -147,6 +159,11 @@ async function loadUserData(user) {
       const collageData = await api.fetchCollage();
       if (collageData) loadCollage(collageData);
     } catch (e) { /* sin collage aún */ }
+    // Cargar el horario escolar
+    try {
+      const horario = await api.fetchSchedule();
+      loadSchedule(horario);
+    } catch (e) { /* sin horario aún */ }
     setConnectionState("online", "Cuenta sincronizada");
   } catch (err) {
     if (err.status === 401) {
@@ -328,6 +345,15 @@ function switchTab(target, directionHint) {
     updateArrowColors(target);
     updateDots(target);
 
+    // Salvaguarda: garantizar que SOLO el panel destino quede activo.
+    // (En móvil, transiciones interrumpidas dejaban 2 paneles activos y
+    //  la app "saltaba" a otra pestaña como el collage.)
+    document.querySelectorAll(".tab-panel").forEach((p) => {
+      p.classList.remove("slide-in-left", "slide-in-right", "slide-out-left", "slide-out-right");
+      if (p.id !== `panel-${target}`) p.classList.remove("active");
+    });
+    toPanel.classList.add("active");
+
     // Solo simula el tablero visible (ahorra CPU)
     const cid = STICKER_CONTAINERS[target];
     if (cid) physics.activateBoard(cid);
@@ -495,9 +521,22 @@ function initDayPicker() {
       label.textContent = fmt(iso);
     }
 
-    if (prev) prev.onclick = () => shift(-1);
-    if (next) next.onclick = () => shift(1);
-    if (allBtn) allBtn.onclick = () => { setViewDate(type, null); label.textContent = "TODO"; };
+    // Enganche robusto para móvil: pointerup + stopPropagation evita que
+    // el tablero de física de abajo se robe el toque.
+    function bind(btn, fn) {
+      if (!btn) return;
+      btn.addEventListener("pointerup", (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        fn();
+      });
+      // respaldo para navegadores que no disparan pointerup en el botón
+      btn.addEventListener("click", (e) => { e.stopPropagation(); });
+    }
+
+    bind(prev,  () => shift(-1));
+    bind(next,  () => shift(1));
+    bind(allBtn, () => { setViewDate(type, null); label.textContent = "TODO"; });
     if (label) label.textContent = "TODO";
   });
 }
@@ -575,6 +614,8 @@ function bootstrap() {
   initDayPicker();
   initCollage();
   setCollageSyncHandler(syncCollage);
+  initSchedule();
+  setScheduleSyncHandler(syncSchedule);
 
   const session = auth.restoreSession();
   if (session) {
