@@ -130,6 +130,14 @@
 
       <!-- ═══ PANEL: CALENDARIO ═══ -->
       <div id="panel-calendar" class="tab-panel calendar-board" role="tabpanel">
+
+        <!-- Interruptor MES / HORARIO -->
+        <div class="cal-mode-switch">
+          <button type="button" class="cal-mode active" data-mode="month">MES</button>
+          <button type="button" class="cal-mode" data-mode="schedule">HORARIO</button>
+        </div>
+
+        <div id="cal-view-month">
         <div class="calendar-header">
           <button id="cal-prev" class="btn-icon-nav" aria-label="Mes anterior">‹</button>
           <button id="cal-next" class="btn-icon-nav" aria-label="Mes siguiente">›</button>
@@ -147,6 +155,21 @@
         
         <div id="cal-detail" class="cal-detail">
           <p class="cal-detail-hint">Selecciona un día para ver actividad</p>
+        </div>
+        </div><!-- /#cal-view-month -->
+
+        <!-- ═══ VISTA: HORARIO ESCOLAR ═══ -->
+        <div id="cal-view-schedule" class="hidden">
+          <div class="sched-toolbar">
+            <div class="sched-sub-switch">
+              <button type="button" class="sched-sub active" data-sub="week">SEMANA</button>
+              <button type="button" class="sched-sub" data-sub="day">DIA</button>
+            </div>
+            <button type="button" id="btn-add-class" class="sched-add">+ CLASE</button>
+          </div>
+
+          <div id="sched-week" class="sched-week"></div>
+          <div id="sched-day" class="sched-day hidden"></div>
         </div>
       </div>
 
@@ -284,6 +307,61 @@
     </div>
   </dialog>
 
+  <!-- ═══ MODAL: CLASE DEL HORARIO ═══ -->
+  <dialog id="modal-class" class="modal">
+    <form id="form-class" method="dialog">
+      <div class="modal-header-tag habit">
+        <h2 class="tag-title">CLASE</h2>
+        <div class="tag-subtitle">Mi materia es...</div>
+      </div>
+
+      <input type="hidden" id="class-id">
+
+      <label for="class-name">Materia</label>
+      <input type="text" id="class-name" maxlength="40" required placeholder="ej. Calculo Diferencial">
+
+      <label for="class-room">Salon</label>
+      <input type="text" id="class-room" maxlength="20" placeholder="ej. A-204">
+
+      <label>Dias</label>
+      <div class="class-days">
+        <button type="button" class="cday" data-day="1">L</button>
+        <button type="button" class="cday" data-day="2">M</button>
+        <button type="button" class="cday" data-day="3">X</button>
+        <button type="button" class="cday" data-day="4">J</button>
+        <button type="button" class="cday" data-day="5">V</button>
+        <button type="button" class="cday" data-day="6">S</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="class-start">Hora inicio</label>
+          <input type="time" id="class-start" required>
+        </div>
+        <div class="form-group">
+          <label for="class-end">Hora fin</label>
+          <input type="time" id="class-end" required>
+        </div>
+      </div>
+
+      <label>Color</label>
+      <div class="class-colors">
+        <button type="button" class="ccolor" data-color="#9bf300" style="background:#9bf300"></button>
+        <button type="button" class="ccolor" data-color="#ff2d94" style="background:#ff2d94"></button>
+        <button type="button" class="ccolor" data-color="#00e5ff" style="background:#00e5ff"></button>
+        <button type="button" class="ccolor" data-color="#ff6b00" style="background:#ff6b00"></button>
+        <button type="button" class="ccolor" data-color="#7b2fff" style="background:#7b2fff"></button>
+        <button type="button" class="ccolor" data-color="#ffd100" style="background:#ffd100"></button>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" id="btn-class-cancel" class="btn-ghost">Cancelar</button>
+        <button type="button" id="btn-class-delete" class="btn-danger hidden">Eliminar</button>
+        <button type="submit" class="btn btn-primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
   <!-- ═══ ANIMACIÓN STICKER EN SEÑAL DE STOP ═══ -->
   <div id="sticker-overlay" class="sticker-overlay">
     <div class="stop-sign">
@@ -301,6 +379,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.15.0/InertiaPlugin.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/matter"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.min.js"></script>
+  <script src="js/debug-errors.js"></script>
   <script type="module" src="js/app.js"></script>
 </body>
 </html>
