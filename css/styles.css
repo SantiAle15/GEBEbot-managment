@@ -4203,7 +4203,8 @@ html, body {
   left: 20px;
   top: auto;
   transform: rotate(-1.5deg);
-  z-index: 40;
+  z-index: 200;
+  pointer-events: auto;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -4213,6 +4214,7 @@ html, body {
   padding: 4px 6px;
   box-shadow: 4px 4px 0 rgba(0,0,0,0.4), 0 0 0 2px #9bf300;
 }
+.day-explorer button { pointer-events: auto; touch-action: manipulation; }
 .day-explorer .day-exp-btn {
   background: #9bf300;
   color: #12101a;
@@ -4276,6 +4278,9 @@ html, body {
 }
 
 /* Viewport (área visible) — ocupa todo el panel */
+/* El collage solo captura toques cuando SU pestaña está activa.
+   Evita que en móvil "robe" el gesto al cambiar de pestaña. */
+.tab-panel:not(.active) .collage-viewport { pointer-events: none; }
 .collage-viewport {
   position: absolute;
   inset: 0;
@@ -4531,3 +4536,118 @@ html, body {
 .sticker-completed.splat-cyan::after    { background: rgba(0,180,220,0.82);  box-shadow: 0 18px 0 -3px rgba(0,180,220,0.35); }
 .sticker-completed.splat-orange::after  { background: rgba(255,107,0,0.85);  box-shadow: 0 18px 0 -3px rgba(255,107,0,0.35); }
 .sticker-completed.splat-purple::after  { background: rgba(123,47,255,0.82); box-shadow: 0 18px 0 -3px rgba(123,47,255,0.35); }
+
+/* ═══════════════════════════════════════════════════════════
+   HORARIO ESCOLAR — bloques tipo cinta / pintura
+   ═══════════════════════════════════════════════════════════ */
+.cal-mode-switch {
+  display: flex; gap: 6px; justify-content: center;
+  margin: 10px auto 6px; padding: 4px;
+  background: #12101a; border-radius: 6px; width: fit-content;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.35);
+}
+.cal-mode {
+  background: transparent; color: #fff; border: none;
+  padding: 6px 18px; border-radius: 4px; cursor: pointer;
+  font-family: var(--font-graffiti, "Permanent Marker", cursive);
+  font-size: .9rem; letter-spacing: 1px;
+}
+.cal-mode.active { background: #9bf300; color: #12101a; }
+
+.sched-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; padding: 4px 10px 10px;
+}
+.sched-sub-switch { display: flex; gap: 4px; }
+.sched-sub {
+  background: #12101a; color: #fff; border: 2px solid #12101a;
+  padding: 5px 12px; border-radius: 4px; cursor: pointer;
+  font-size: .72rem; font-weight: 700; letter-spacing: 1px;
+}
+.sched-sub.active { background: #00e5ff; color: #12101a; }
+.sched-add {
+  background: #ff2d94; color: #fff; border: 2px solid #12101a;
+  padding: 6px 14px; border-radius: 5px; cursor: pointer;
+  font-family: var(--font-graffiti, "Permanent Marker", cursive);
+  font-size: .85rem; letter-spacing: 1px;
+  box-shadow: 3px 3px 0 #12101a;
+}
+.sched-add:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #12101a; }
+
+/* ── Vista SEMANA ── */
+.sched-week { overflow: auto; padding: 0 8px 20px; }
+.sw-grid { display: flex; gap: 3px; min-width: 320px; }
+.sw-hours { flex: 0 0 42px; padding-top: 26px; }
+.sw-hour {
+  font-size: .62rem; color: #12101a; opacity: .55;
+  border-top: 1px dashed rgba(0,0,0,.2); padding-top: 2px;
+}
+.sw-day { flex: 1; min-width: 52px; }
+.sw-day-head {
+  height: 26px; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-graffiti, "Permanent Marker", cursive);
+  background: #12101a; color: #9bf300; border-radius: 4px 4px 0 0;
+  font-size: .85rem;
+}
+.sw-col { position: relative; background: rgba(255,255,255,.35); border-radius: 0 0 4px 4px; }
+.sw-line { position: absolute; left: 0; right: 0; border-top: 1px dashed rgba(0,0,0,.15); }
+.sw-class {
+  position: absolute; left: 2px; right: 2px;
+  border: 2px solid #12101a; border-radius: 4px;
+  padding: 3px 4px; overflow: hidden; cursor: pointer;
+  box-shadow: 2px 2px 0 rgba(0,0,0,.4);
+  display: flex; flex-direction: column; gap: 1px;
+}
+.sw-class:hover { filter: brightness(1.08); }
+.swc-name {
+  font-size: .62rem; font-weight: 800; color: #12101a; line-height: 1.05;
+  overflow: hidden; text-overflow: ellipsis;
+}
+.swc-room { font-size: .55rem; color: rgba(0,0,0,.65); font-weight: 700; }
+
+/* ── Vista DÍA ── */
+.sched-day { padding: 0 12px 20px; }
+.sd-daybar { display: flex; gap: 5px; justify-content: center; margin-bottom: 12px; }
+.sd-day {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 2px solid #12101a; background: #fff; cursor: pointer;
+  font-weight: 800; color: #12101a;
+}
+.sd-day.active { background: #9bf300; box-shadow: 2px 2px 0 #12101a; }
+.sd-list { display: flex; flex-direction: column; gap: 8px; }
+.sd-item {
+  display: flex; gap: 12px; align-items: center;
+  background: #fff; border: 2px solid #12101a; border-left-width: 8px;
+  border-radius: 6px; padding: 10px 12px; cursor: pointer;
+  box-shadow: 3px 3px 0 rgba(0,0,0,.25);
+}
+.sd-item:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 rgba(0,0,0,.25); }
+.sd-time {
+  font-family: var(--font-graffiti, "Permanent Marker", cursive);
+  font-size: 1rem; color: #12101a; line-height: 1.1; text-align: center;
+  min-width: 56px;
+}
+.sd-time span { display: block; font-size: .7rem; opacity: .55; }
+.sd-name { font-weight: 800; color: #12101a; font-size: 1rem; }
+.sd-room { font-size: .78rem; color: #666; }
+.sched-empty { text-align: center; color: #12101a; opacity: .6; padding: 24px 10px; }
+
+/* ── Modal de clase ── */
+.class-days { display: flex; gap: 6px; margin: 4px 0 10px; }
+.cday {
+  flex: 1; padding: 9px 0; border: 2px solid #12101a; background: #fff;
+  border-radius: 5px; font-weight: 800; cursor: pointer; color: #12101a;
+}
+.cday.on { background: #9bf300; box-shadow: 2px 2px 0 #12101a; }
+.class-colors { display: flex; gap: 8px; margin: 4px 0 10px; }
+.ccolor {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 3px solid #12101a; cursor: pointer;
+}
+.ccolor.on { transform: scale(1.15); box-shadow: 0 0 0 3px #fff, 0 0 0 5px #12101a; }
+
+@media (max-width: 600px) {
+  .sw-hours { flex: 0 0 32px; }
+  .sw-day { min-width: 44px; }
+  .swc-name { font-size: .55rem; }
+}
