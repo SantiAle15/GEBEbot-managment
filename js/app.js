@@ -1,12 +1,12 @@
-import { POLL_INTERVAL_MS } from "./config.js?v=1785823338";
-import * as auth from "./auth.js?v=1785823338";
-import * as api from "./api.js?v=1785823338";
-import * as state from "./state.js?v=1785823338";
-import { initTasks, setSyncHandler, renderStickers, setViewDate, getViewDate } from "./tasks.js?v=1785823338";
-import { initCollage, loadCollage, getCollageData, setCollageSyncHandler, refreshCollage } from "./collage.js?v=1785823338";
-import * as physics from "./physics.js?v=1785823338";
-import { initCalendar } from "./calendar.js?v=1785823338";
-import { initSchedule, loadSchedule, getScheduleData, setScheduleSyncHandler } from "./schedule.js?v=1785823338";
+import { POLL_INTERVAL_MS } from "./config.js";
+import * as auth from "./auth.js";
+import * as api from "./api.js";
+import * as state from "./state.js";
+import { initTasks, setSyncHandler, renderStickers, setViewDate, getViewDate } from "./tasks.js";
+import { initCollage, loadCollage, getCollageData, setCollageSyncHandler, refreshCollage } from "./collage.js";
+import * as physics from "./physics.js";
+import { initCalendar } from "./calendar.js";
+import { initSchedule, loadSchedule, getScheduleData, setScheduleSyncHandler } from "./schedule.js";
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -345,15 +345,6 @@ function switchTab(target, directionHint) {
     updateArrowColors(target);
     updateDots(target);
 
-    // Salvaguarda: garantizar que SOLO el panel destino quede activo.
-    // (En móvil, transiciones interrumpidas dejaban 2 paneles activos y
-    //  la app "saltaba" a otra pestaña como el collage.)
-    document.querySelectorAll(".tab-panel").forEach((p) => {
-      p.classList.remove("slide-in-left", "slide-in-right", "slide-out-left", "slide-out-right");
-      if (p.id !== `panel-${target}`) p.classList.remove("active");
-    });
-    toPanel.classList.add("active");
-
     // Solo simula el tablero visible (ahorra CPU)
     const cid = STICKER_CONTAINERS[target];
     if (cid) physics.activateBoard(cid);
@@ -521,10 +512,9 @@ function initDayPicker() {
       label.textContent = fmt(iso);
     }
 
-    // Enganche simple y seguro (funciona en desktop y móvil)
-    if (prev)   prev.addEventListener("click",   (e) => { e.stopPropagation(); shift(-1); });
-    if (next)   next.addEventListener("click",   (e) => { e.stopPropagation(); shift(1); });
-    if (allBtn) allBtn.addEventListener("click", (e) => { e.stopPropagation(); setViewDate(type, null); label.textContent = "TODO"; });
+    if (prev) prev.onclick = () => shift(-1);
+    if (next) next.onclick = () => shift(1);
+    if (allBtn) allBtn.onclick = () => { setViewDate(type, null); label.textContent = "TODO"; };
     if (label) label.textContent = "TODO";
   });
 }
