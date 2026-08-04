@@ -521,22 +521,10 @@ function initDayPicker() {
       label.textContent = fmt(iso);
     }
 
-    // Enganche robusto para móvil: pointerup + stopPropagation evita que
-    // el tablero de física de abajo se robe el toque.
-    function bind(btn, fn) {
-      if (!btn) return;
-      btn.addEventListener("pointerup", (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        fn();
-      });
-      // respaldo para navegadores que no disparan pointerup en el botón
-      btn.addEventListener("click", (e) => { e.stopPropagation(); });
-    }
-
-    bind(prev,  () => shift(-1));
-    bind(next,  () => shift(1));
-    bind(allBtn, () => { setViewDate(type, null); label.textContent = "TODO"; });
+    // Enganche simple y seguro (funciona en desktop y móvil)
+    if (prev)   prev.addEventListener("click",   (e) => { e.stopPropagation(); shift(-1); });
+    if (next)   next.addEventListener("click",   (e) => { e.stopPropagation(); shift(1); });
+    if (allBtn) allBtn.addEventListener("click", (e) => { e.stopPropagation(); setViewDate(type, null); label.textContent = "TODO"; });
     if (label) label.textContent = "TODO";
   });
 }
