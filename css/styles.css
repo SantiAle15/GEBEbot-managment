@@ -4203,8 +4203,7 @@ html, body {
   left: 20px;
   top: auto;
   transform: rotate(-1.5deg);
-  z-index: 200;
-  pointer-events: auto;
+  z-index: 40;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -4214,7 +4213,6 @@ html, body {
   padding: 4px 6px;
   box-shadow: 4px 4px 0 rgba(0,0,0,0.4), 0 0 0 2px #9bf300;
 }
-.day-explorer button { pointer-events: auto; touch-action: manipulation; }
 .day-explorer .day-exp-btn {
   background: #9bf300;
   color: #12101a;
@@ -4278,9 +4276,6 @@ html, body {
 }
 
 /* Viewport (área visible) — ocupa todo el panel */
-/* El collage solo captura toques cuando SU pestaña está activa.
-   Evita que en móvil "robe" el gesto al cambiar de pestaña. */
-.tab-panel:not(.active) .collage-viewport { pointer-events: none; }
 .collage-viewport {
   position: absolute;
   inset: 0;
