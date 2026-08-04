@@ -1,12 +1,12 @@
-import { POLL_INTERVAL_MS } from "./config.js";
-import * as auth from "./auth.js";
-import * as api from "./api.js";
-import * as state from "./state.js";
-import { initTasks, setSyncHandler, renderStickers, setViewDate, getViewDate } from "./tasks.js";
-import { initCollage, loadCollage, getCollageData, setCollageSyncHandler, refreshCollage } from "./collage.js";
-import * as physics from "./physics.js";
-import { initCalendar } from "./calendar.js";
-import { initSchedule, loadSchedule, getScheduleData, setScheduleSyncHandler } from "./schedule.js";
+import { POLL_INTERVAL_MS } from "./config.js?v=1785823338";
+import * as auth from "./auth.js?v=1785823338";
+import * as api from "./api.js?v=1785823338";
+import * as state from "./state.js?v=1785823338";
+import { initTasks, setSyncHandler, renderStickers, setViewDate, getViewDate } from "./tasks.js?v=1785823338";
+import { initCollage, loadCollage, getCollageData, setCollageSyncHandler, refreshCollage } from "./collage.js?v=1785823338";
+import * as physics from "./physics.js?v=1785823338";
+import { initCalendar } from "./calendar.js?v=1785823338";
+import { initSchedule, loadSchedule, getScheduleData, setScheduleSyncHandler } from "./schedule.js?v=1785823338";
 
 const $ = (sel) => document.querySelector(sel);
 
