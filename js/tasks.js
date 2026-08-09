@@ -219,7 +219,11 @@ function setupCompleteButton(item, type) {
         try { await api.notifyHabitComplete(); } catch (e) {}
       }
     } else if (type === 'reminder') {
-      state.updateReminder(item.id, { completed: !item.completed });
+      const marcando = !item.completed;
+      state.updateReminder(item.id, {
+        completed: marcando,
+        completedAt: marcando ? new Date().toISOString() : "",
+      });
     }
     onSyncRequest();   // guarda en Firebase
     document.getElementById("modal-task").close();
