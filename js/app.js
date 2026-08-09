@@ -255,6 +255,7 @@ const TAB_COLORS = {
   tasks: "#4CAF50",
   habits: "#FFC107",
   reminders: "#2196F3",
+  collage: "#7b2fff",
   calendar: "#f44336",
   gebebot: "#FF9800",
 };
@@ -270,6 +271,7 @@ let currentTab = "tasks";
 let tabIsAnimating = false;
 
 function hexToRgba(hex, alpha) {
+  if (!hex) return `rgba(155, 243, 0, ${alpha})`;   // respaldo si falta el color
   const h = hex.replace("#", "");
   const bigint = parseInt(h, 16);
   const r = (bigint >> 16) & 255;
