@@ -243,9 +243,22 @@ function setupClassModal() {
     });
   });
 
+  const colorInput = document.getElementById("class-color");
+
+  // El selector libre (gradiente del sistema) manda
+  if (colorInput) {
+    colorInput.addEventListener("input", () => {
+      editingColor = colorInput.value;
+      modal.querySelectorAll(".ccolor").forEach((b) =>
+        b.classList.toggle("on", b.dataset.color.toLowerCase() === editingColor.toLowerCase()));
+    });
+  }
+
+  // Los atajos solo rellenan el selector libre
   modal.querySelectorAll(".ccolor").forEach((btn) => {
     btn.addEventListener("click", () => {
       editingColor = btn.dataset.color;
+      if (colorInput) colorInput.value = editingColor;
       modal.querySelectorAll(".ccolor").forEach((b) => b.classList.remove("on"));
       btn.classList.add("on");
     });
@@ -270,7 +283,7 @@ function setupClassModal() {
       dias: [...editingDays].sort(),
       horaInicio: document.getElementById("class-start").value,
       horaFin: document.getElementById("class-end").value,
-      color: editingColor,
+      color: (document.getElementById("class-color") || {}).value || editingColor,
     };
     if (!datos.materia || !datos.dias.length) return;
 
@@ -304,8 +317,10 @@ function openClassModal(clase) {
   modal.querySelectorAll(".cday").forEach((b) => {
     b.classList.toggle("on", editingDays.includes(parseInt(b.dataset.day, 10)));
   });
+  const ci = document.getElementById("class-color");
+  if (ci) ci.value = editingColor;
   modal.querySelectorAll(".ccolor").forEach((b) => {
-    b.classList.toggle("on", b.dataset.color === editingColor);
+    b.classList.toggle("on", b.dataset.color.toLowerCase() === editingColor.toLowerCase());
   });
 
   modal.showModal();
