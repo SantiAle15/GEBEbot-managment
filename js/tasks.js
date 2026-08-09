@@ -1,6 +1,7 @@
 import * as state from "./state.js";
 import * as api from "./api.js";
 import * as physics from "./physics.js";
+import { getClasses } from "./schedule.js";
 
 let onSyncRequest = () => {};
 export function setSyncHandler(fn) { onSyncRequest = fn; }
@@ -27,22 +28,25 @@ export function initTasks() {
     const timeStart = document.getElementById("task-time-start").value;
     const timeEnd = document.getElementById("task-time-end").value;
     const category = document.getElementById("task-category").value;
+    const subject = (category === "escuela")
+      ? document.getElementById("task-subject").value
+      : "";
     const recurrence = document.getElementById("task-recurrence").value;
 
     if (!title) return;
 
     if (type === "task") {
       if (id) {
-        state.updateTask(id, { title, description, date, dateEnd, timeStart, timeEnd, category, recurrence });
+        state.updateTask(id, { title, description, date, dateEnd, timeStart, timeEnd, category, subject, recurrence });
       } else {
-        state.addTask({ id: generateId(), title, description, date, dateEnd, timeStart, timeEnd, category, recurrence, completed: false, isNew: true, createdAt: new Date().toISOString() });
+        state.addTask({ id: generateId(), title, description, date, dateEnd, timeStart, timeEnd, category, subject, recurrence, completed: false, isNew: true, createdAt: new Date().toISOString() });
         playStopStickerAnimation(title, 'task');
       }
     } else if (type === "habit") {
       if (id) {
-        state.updateHabit(id, { title, description, startDate: date, dateEnd, timeStart, timeEnd, category, recurrence });
+        state.updateHabit(id, { title, description, startDate: date, dateEnd, timeStart, timeEnd, category, subject, recurrence });
       } else {
-        state.addHabit({ id: generateId(), title, description, startDate: date, dateEnd, timeStart, timeEnd, category, recurrence, completedDates: [], streak: 0, isNew: true, createdAt: new Date().toISOString() });
+        state.addHabit({ id: generateId(), title, description, startDate: date, dateEnd, timeStart, timeEnd, category, subject, recurrence, completedDates: [], streak: 0, isNew: true, createdAt: new Date().toISOString() });
         playStopStickerAnimation(title, 'habit');
       }
     } else if (type === "reminder") {
@@ -80,6 +84,10 @@ export function initTasks() {
     renderStickers('habit');
     renderStickers('reminder');
   });
+
+  // Mostrar/ocultar el selector de materia al cambiar la categoría
+  const catSel = document.getElementById("task-category");
+  if (catSel) catSel.addEventListener("change", updateSubjectVisibility);
 }
 
 function updateModalHeader(type) {
@@ -115,18 +123,21 @@ export function openItemModal(item = null, type = 'task') {
     document.getElementById("task-time-end").value = item.timeEnd || "";
     document.getElementById("task-category").value = item.category || "personal";
     document.getElementById("task-recurrence").value = item.recurrence || "none";
+    fillSubjectOptions(item.subject);
     deleteBtn.classList.remove("hidden");
     setupCompleteButton(item, type);   // botón "Completar"
   } else {
     document.getElementById("task-id").value = "";
     document.getElementById("task-date").value = getToday();
     if (type === 'habit') document.getElementById("task-recurrence").value = "daily";
+    fillSubjectOptions("");
     deleteBtn.classList.add("hidden");
     removeCompleteButton();
   }
 
   // Recordatorios: SOLO título. Ocultamos todos los demás campos.
   applyReminderFieldVisibility(type);
+  updateSubjectVisibility();
 
   modal.showModal();
 }
@@ -354,6 +365,21 @@ function createStickerElement(item, type) {
   header.appendChild(title);
   header.appendChild(subtitle);
 
+  // ── Marca de MATERIA: estrella Y2K con el color de la clase ──
+  const clase = getSubjectOf(item);
+  if (clase) {
+    const marca = document.createElement("div");
+    marca.className = "subject-mark";
+    marca.style.setProperty("--sm-color", clase.color || "#9bf300");
+    marca.title = clase.materia;
+    marca.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true">' +
+      '<path d="M12 0 L14.5 9.5 L24 12 L14.5 14.5 L12 24 L9.5 14.5 L0 12 L9.5 9.5 Z"/>' +
+      '</svg><span class="sm-label"></span>';
+    marca.querySelector(".sm-label").textContent = clase.materia;
+    sticker.appendChild(marca);
+  }
+
   const body = document.createElement("div");
   body.className = "sticker-body";
   const text = document.createElement("div");
@@ -428,4 +454,34 @@ function formatTimeRange(timeStart, timeEnd) {
   if (!timeStart) return "";
   if (timeEnd) return `${timeStart} - ${timeEnd}`;
   return timeStart;
+}
+
+// ── Selector de MATERIA (solo cuando la categoría es "escuela") ──
+// Llena la lista con las clases que el usuario agregó en su horario.
+function fillSubjectOptions(seleccion) {
+  const sel = document.getElementById("task-subject");
+  if (!sel) return;
+  const clases = (typeof getClasses === "function" ? getClasses() : []) || [];
+  sel.innerHTML = '<option value="">— Sin materia —</option>';
+  clases.forEach((c) => {
+    const o = document.createElement("option");
+    o.value = c.id;
+    o.textContent = c.materia + (c.salon ? " (" + c.salon + ")" : "");
+    sel.appendChild(o);
+  });
+  sel.value = seleccion || "";
+}
+
+function updateSubjectVisibility() {
+  const cat = document.getElementById("task-category");
+  const grp = document.getElementById("subject-group");
+  if (!cat || !grp) return;
+  grp.classList.toggle("hidden", cat.value !== "escuela");
+}
+
+// Devuelve la clase (materia) ligada a un item, o null
+export function getSubjectOf(item) {
+  if (!item || item.category !== "escuela" || !item.subject) return null;
+  const clases = (typeof getClasses === "function" ? getClasses() : []) || [];
+  return clases.find((c) => c.id === item.subject) || null;
 }
