@@ -154,6 +154,10 @@ async function loadUserData(user) {
   try {
     const data = await api.fetchUser(user);
     state.loadFromServer(data);
+    // Borrar lo completado hace mas de una semana (mantiene la vista limpia)
+    if (state.purgeOldCompleted() > 0) {
+      try { await syncToDevice(); } catch (e) { /* se reintenta luego */ }
+    }
     // Cargar el collage (si existe)
     try {
       const collageData = await api.fetchCollage();
@@ -236,6 +240,7 @@ function startPolling() {
     if (localSaveInProgress) return;
 
     state.loadFromServer(data);
+    state.purgeOldCompleted();   // solo en memoria: la escritura la hace loadUserData
     renderStickers('task');
     renderStickers('habit');
     renderStickers('reminder');
