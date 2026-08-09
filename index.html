@@ -277,6 +277,13 @@
         </div>
       </div>
       
+      <div id="subject-group" class="form-group hidden">
+        <label for="task-subject">Materia</label>
+        <select id="task-subject">
+          <option value="">— Sin materia —</option>
+        </select>
+      </div>
+
       <label for="task-recurrence">Repetición</label>
       <select id="task-recurrence">
         <option value="none">No repetir</option>
@@ -344,14 +351,17 @@
         </div>
       </div>
 
-      <label>Color</label>
-      <div class="class-colors">
-        <button type="button" class="ccolor" data-color="#9bf300" style="background:#9bf300"></button>
-        <button type="button" class="ccolor" data-color="#ff2d94" style="background:#ff2d94"></button>
-        <button type="button" class="ccolor" data-color="#00e5ff" style="background:#00e5ff"></button>
-        <button type="button" class="ccolor" data-color="#ff6b00" style="background:#ff6b00"></button>
-        <button type="button" class="ccolor" data-color="#7b2fff" style="background:#7b2fff"></button>
-        <button type="button" class="ccolor" data-color="#ffd100" style="background:#ffd100"></button>
+      <label for="class-color">Color</label>
+      <div class="class-color-row">
+        <input type="color" id="class-color" value="#9bf300">
+        <div class="color-presets">
+          <button type="button" class="ccolor" data-color="#9bf300" style="background:#9bf300"></button>
+          <button type="button" class="ccolor" data-color="#ff2d94" style="background:#ff2d94"></button>
+          <button type="button" class="ccolor" data-color="#00e5ff" style="background:#00e5ff"></button>
+          <button type="button" class="ccolor" data-color="#ff6b00" style="background:#ff6b00"></button>
+          <button type="button" class="ccolor" data-color="#7b2fff" style="background:#7b2fff"></button>
+          <button type="button" class="ccolor" data-color="#ffd100" style="background:#ffd100"></button>
+        </div>
       </div>
 
       <div class="modal-actions">
