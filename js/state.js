@@ -62,8 +62,10 @@ function normalizeTask(t) {
     timeStart: t.timeStart || "",
     timeEnd: t.timeEnd || "",
     category: t.category || "personal",
+    subject: t.subject || "",
     recurrence: t.recurrence || "none",
     completed: Boolean(t.completed),
+    completedAt: t.completedAt || "",
     isNew: Boolean(t.isNew),
     createdAt: t.createdAt || todayISO(),
     colorHSL: t.colorHSL || generateRandomColorHSL('task'),
@@ -85,6 +87,7 @@ function normalizeHabit(h) {
     timeStart: h.timeStart || "",
     timeEnd: h.timeEnd || "",
     category: h.category || "personal",
+    subject: h.subject || "",
     recurrence: h.recurrence || "daily",
     completedDates: Array.isArray(h.completedDates) ? h.completedDates : [],
     streak: Number(h.streak) || 0,
@@ -105,6 +108,7 @@ function normalizeReminder(r) {
     title: String(r.title || "").trim(),
     description: String(r.description || ""),
     completed: Boolean(r.completed),
+    completedAt: r.completedAt || "",
     expiryDate: r.expiryDate || "",
     isNew: Boolean(r.isNew),
     createdAt: r.createdAt || todayISO(),
@@ -159,10 +163,42 @@ export function removeTask(id) { tasks = tasks.filter((t) => t.id !== id); emit(
 export function removeHabit(id) { habits = habits.filter((h) => h.id !== id); emit(); }
 export function removeReminder(id) { reminders = reminders.filter((r) => r.id !== id); emit(); }
 
+
+// ═══════════════════════════════════════════════════════════
+//  LIMPIEZA AUTOMATICA
+//  Las tareas y recordatorios COMPLETADOS se borran solos una
+//  semana despues, para que la vista "TODO" no se sature.
+//  Los habitos NO se tocan (su historial es su racha).
+// ═══════════════════════════════════════════════════════════
+const DIAS_PARA_BORRAR = 7;
+
+export function purgeOldCompleted() {
+  const limite = Date.now() - DIAS_PARA_BORRAR * 24 * 60 * 60 * 1000;
+
+  const caducado = (x) => {
+    if (!x.completed) return false;
+    // Sin marca de tiempo (datos viejos): se le pone ahora y sobrevive
+    if (!x.completedAt) { x.completedAt = new Date().toISOString(); return false; }
+    const t = Date.parse(x.completedAt);
+    return !isNaN(t) && t < limite;
+  };
+
+  const antesT = tasks.length;
+  const antesR = reminders.length;
+  tasks = tasks.filter((t) => !caducado(t));
+  reminders = reminders.filter((r) => !caducado(r));
+
+  const borrados = (antesT - tasks.length) + (antesR - reminders.length);
+  if (borrados > 0) emit();
+  return borrados;
+}
+
 export function toggleTask(id) {
   const t = tasks.find((x) => x.id === id);
   if (!t) return null;
   t.completed = !t.completed;
+  // Marca de tiempo para el borrado automatico a la semana
+  t.completedAt = t.completed ? new Date().toISOString() : "";
   emit();
   return t;
 }
