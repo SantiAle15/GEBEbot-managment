@@ -191,6 +191,20 @@ export async function fetchCollage() {
  *
  * Devuelve una función para desuscribirse.
  */
+/** Guarda el horario escolar */
+export async function saveSchedule(clases) {
+  const uid = requireUid();
+  await update(ref(db, `users/${uid}`), { horario: clases || [] });
+  return { ok: true };
+}
+
+/** Lee el horario escolar */
+export async function fetchSchedule() {
+  const uid = requireUid();
+  const snap = await get(ref(db, `users/${uid}/horario`));
+  return snap.val() || [];
+}
+
 export function subscribeUserData(callback) {
   const uid = currentUid || auth.currentUser?.uid;
   if (!uid) return () => {};
